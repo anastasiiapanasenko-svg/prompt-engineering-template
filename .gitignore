@@ -1,0 +1,20 @@
+# Python / uv
+backend/.venv/
+backend/__pycache__/
+**/__pycache__/
+*.py[cod]
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Env
+.env
+frontend/.env
+
+# IDE
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
