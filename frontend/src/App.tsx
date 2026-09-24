@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { HomePage } from '@/features/recipe-generator/HomePage'
 import { RecipeDetailsPage } from '@/features/recipe-generator/RecipeDetailsPage'
 import { RecipeListPage } from '@/features/recipe-generator/RecipeListPage'
-import { hydrateState } from '@/store/slices/recipeGeneratorSlice'
+import { setLanguage, hydrateState } from '@/store/slices/recipeGeneratorSlice'
 import type { RootState } from '@/store/store'
 
 function App() {
@@ -12,31 +12,52 @@ function App() {
   const currentPage = useSelector(
     (state: RootState) => state.recipeGenerator.currentPage,
   )
+  const selectedIngredients = useSelector(
+    (state: RootState) => state.recipeGenerator.selectedIngredients,
+  )
+  const filters = useSelector((state: RootState) => state.recipeGenerator.filters)
+  const selectedRecipeId = useSelector(
+    (state: RootState) => state.recipeGenerator.selectedRecipeId,
+  )
+  const language = useSelector((state: RootState) => state.recipeGenerator.language)
 
   useEffect(() => {
-    const savedState = localStorage.getItem('recipe-generator-state')
-    if (savedState) {
-      try {
-        dispatch(hydrateState(JSON.parse(savedState)))
-      } catch {
-        localStorage.removeItem('recipe-generator-state')
-      }
+    const savedState = window.sessionStorage.getItem('recipe-generator-state')
+    if (!savedState) {
+      return
+    }
+
+    try {
+      const parsed = JSON.parse(savedState)
+      dispatch(hydrateState(parsed))
+    } catch {
+      window.sessionStorage.removeItem('recipe-generator-state')
     }
   }, [dispatch])
 
   useEffect(() => {
     const state = {
-      selectedIngredients: useSelector(
-        (state: RootState) => state.recipeGenerator.selectedIngredients,
-      ),
-      filters: useSelector((state: RootState) => state.recipeGenerator.filters),
+      selectedIngredients,
+      filters,
       currentPage,
-      selectedRecipeId: useSelector(
-        (state: RootState) => state.recipeGenerator.selectedRecipeId,
-      ),
+      selectedRecipeId,
+      language,
     }
-    localStorage.setItem('recipe-generator-state', JSON.stringify(state))
-  }, [currentPage, dispatch])
+
+    window.sessionStorage.setItem(
+      'recipe-generator-state',
+      JSON.stringify(state),
+    )
+  }, [currentPage, filters, language, selectedIngredients, selectedRecipeId])
+
+  useEffect(() => {
+    const browserLanguage = navigator.language.toLowerCase().startsWith('uk')
+      ? 'uk'
+      : 'en'
+    if (!window.sessionStorage.getItem('recipe-generator-state')) {
+      dispatch(setLanguage(browserLanguage))
+    }
+  }, [dispatch])
 
   if (currentPage === 'list') {
     return <RecipeListPage />

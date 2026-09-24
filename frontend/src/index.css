@@ -29,24 +29,24 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --background: oklch(0.11 0.025 45);
+  --foreground: oklch(0.96 0.04 90);
+  --card: oklch(0.17 0.035 45);
+  --card-foreground: oklch(0.96 0.04 90);
+  --popover: oklch(0.17 0.035 45);
+  --popover-foreground: oklch(0.96 0.04 90);
+  --primary: oklch(0.78 0.15 75);
+  --primary-foreground: oklch(0.15 0.03 45);
+  --secondary: oklch(0.23 0.045 45);
+  --secondary-foreground: oklch(0.96 0.04 90);
+  --muted: oklch(0.23 0.045 45);
+  --muted-foreground: oklch(0.78 0.05 80);
+  --accent: oklch(0.78 0.15 75);
+  --accent-foreground: oklch(0.15 0.03 45);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: oklch(0.29 0.06 45);
+  --input: oklch(0.29 0.06 45);
+  --ring: oklch(0.78 0.15 75);
 }
 
 .dark {
@@ -75,6 +75,20 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply min-h-screen text-[#fef3c7] antialiased;
+    background-color: #0d0704;
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(139, 73, 25, 0.42), transparent 28%),
+      radial-gradient(circle at 88% 18%, rgba(120, 63, 24, 0.3), transparent 24%),
+      linear-gradient(rgba(13, 7, 4, 0.72), rgba(8, 4, 2, 0.88)),
+      url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1920&q=80');
+    background-attachment: fixed;
+    background-position: center;
+    background-size: cover;
+    background-blend-mode: screen, screen, multiply, normal;
+  }
+
+  #root {
+    min-height: 100vh;
   }
 }

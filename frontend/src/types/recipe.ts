@@ -5,10 +5,18 @@ export interface RecipeIngredient {
   quantity: string
 }
 
+export interface UkrainianRecipeContent {
+  name: string
+  description: string
+  ingredients: RecipeIngredient[]
+  steps: string[]
+}
+
 export interface Recipe {
   id: string
   name: string
   description: string
+  uk: UkrainianRecipeContent
   image: string
   prepTimeMinutes: number
   difficulty: 'Easy' | 'Medium' | 'Hard'

@@ -3,6 +3,8 @@ import type { Recipe, RecipeFilters, RecipeMatch } from '@/types/recipe'
 export const normalizeIngredient = (ingredient: string) =>
   ingredient
     .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9\s]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()
@@ -47,7 +49,7 @@ export const getRecipeMatches = (
     return true
   })
 
-  return filteredRecipes
+  const matches = filteredRecipes
     .map((recipe) => {
       const availableIngredients = recipe.ingredients.filter((ingredient) =>
         selectedSet.has(normalizeIngredient(ingredient.name)),
@@ -59,9 +61,9 @@ export const getRecipeMatches = (
 
       const matchCount = availableIngredients.length
       const matchPercentage =
-        selectedIngredients.length === 0
+          recipe.ingredients.length === 0
           ? 0
-          : Math.round((matchCount / selectedIngredients.length) * 100)
+            : Math.round((matchCount / recipe.ingredients.length) * 100)
 
       return {
         recipe,
@@ -71,14 +73,9 @@ export const getRecipeMatches = (
         matchPercentage,
       }
     })
-    .filter((match) => match.matchCount > 0 || selectedIngredients.length > 0)
-    .sort((left, right) => {
-      if (right.matchPercentage !== left.matchPercentage) {
-        return right.matchPercentage - left.matchPercentage
-      }
-      if (right.matchCount !== left.matchCount) {
-        return right.matchCount - left.matchCount
-      }
-      return left.recipe.name.localeCompare(right.recipe.name)
-    })
+    .filter((match) => match.matchPercentage > 0)
+
+  matches.sort((a, b) => b.matchPercentage - a.matchPercentage)
+
+  return matches
 }

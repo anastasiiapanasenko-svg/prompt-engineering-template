@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
+import type { Language } from '@/lib/i18n'
 import type { RecipeFilters } from '@/types/recipe'
 
 export type AppPage = 'home' | 'list' | 'detail'
@@ -9,6 +10,7 @@ interface RecipeGeneratorState {
   filters: RecipeFilters
   currentPage: AppPage
   selectedRecipeId: string | null
+  language: Language
 }
 
 const initialFilters: RecipeFilters = {
@@ -23,6 +25,7 @@ const initialState: RecipeGeneratorState = {
   filters: initialFilters,
   currentPage: 'home',
   selectedRecipeId: null,
+  language: 'en',
 }
 
 const recipeGeneratorSlice = createSlice({
@@ -61,21 +64,56 @@ const recipeGeneratorSlice = createSlice({
     setSelectedRecipeId(state, action: PayloadAction<string | null>) {
       state.selectedRecipeId = action.payload
     },
+    setLanguage(state, action: PayloadAction<Language>) {
+      state.language = action.payload
+    },
     clearSelection(state) {
       state.selectedIngredients = []
       state.filters = initialFilters
       state.selectedRecipeId = null
       state.currentPage = 'home'
     },
-    hydrateState(state, action: PayloadAction<RecipeGeneratorState | null>) {
+    hydrateState(state, action: PayloadAction<Partial<RecipeGeneratorState> | null>) {
       const nextState = action.payload
       if (!nextState) {
         return
       }
-      state.selectedIngredients = nextState.selectedIngredients
-      state.filters = nextState.filters
-      state.currentPage = nextState.currentPage
-      state.selectedRecipeId = nextState.selectedRecipeId
+
+      if (Array.isArray(nextState.selectedIngredients)) {
+        state.selectedIngredients = nextState.selectedIngredients
+      }
+
+      if (nextState.filters) {
+        state.filters = {
+          vegetarian: Boolean(nextState.filters.vegetarian),
+          vegan: Boolean(nextState.filters.vegan),
+          glutenFree: Boolean(nextState.filters.glutenFree),
+          maxPrepMinutes:
+            nextState.filters.maxPrepMinutes === null ||
+            nextState.filters.maxPrepMinutes === undefined
+              ? null
+              : Number(nextState.filters.maxPrepMinutes),
+        }
+      }
+
+      if (
+        nextState.currentPage === 'home' ||
+        nextState.currentPage === 'list' ||
+        nextState.currentPage === 'detail'
+      ) {
+        state.currentPage = nextState.currentPage
+      }
+
+      if (
+        typeof nextState.selectedRecipeId === 'string' ||
+        nextState.selectedRecipeId === null
+      ) {
+        state.selectedRecipeId = nextState.selectedRecipeId
+      }
+
+      if (nextState.language === 'en' || nextState.language === 'uk') {
+        state.language = nextState.language
+      }
     },
   },
 })
@@ -86,6 +124,7 @@ export const {
   setFilter,
   setCurrentPage,
   setSelectedRecipeId,
+  setLanguage,
   clearSelection,
   hydrateState,
 } = recipeGeneratorSlice.actions

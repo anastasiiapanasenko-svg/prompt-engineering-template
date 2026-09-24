@@ -1,20 +1,197 @@
-import type { Recipe } from '@/types/recipe'
+import type { Recipe, UkrainianRecipeContent } from '@/types/recipe'
 
-const makePlaceholder = (label: string, color: string) =>
-  `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
-    <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
-      <rect width="1200" height="800" fill="${color}"/>
-      <rect x="80" y="80" width="1040" height="640" rx="32" fill="rgba(255,255,255,0.12)"/>
-      <text x="600" y="410" text-anchor="middle" fill="white" font-size="64" font-family="Arial, sans-serif" font-weight="700">${label}</text>
-    </svg>
-  `)}`
+const ukrainianContent: Record<string, UkrainianRecipeContent> = {
+  'veggie-burrito-bowl': {
+    name: 'Овочева буріто-боул',
+    description: 'Барвиста миска з рисом, квасолею та запеченими овочами.',
+    ingredients: [
+      { name: 'Коричневий рис', quantity: '1 склянка готового' }, { name: 'Чорні боби', quantity: '1 склянка' },
+      { name: 'Перець', quantity: '1 нарізаний' }, { name: 'Кукурудза', quantity: '1/2 склянки' },
+      { name: 'Авокадо', quantity: '1 нарізане' }, { name: 'Лайм', quantity: 'сік 1 лайма' }, { name: 'Кмин', quantity: '1 ч. л.' },
+    ],
+    steps: ['Зваріть коричневий рис і розпушіть його виделкою.', 'Прогрійте чорні боби в сотейнику з кмином.', 'Запечіть або обсмажте перець і кукурудзу до м’якості.', 'Розкладіть рис, боби, овочі та авокадо по мисках.', 'Додайте сік лайма і одразу подавайте.'],
+  },
+  'chicken-vegetable-stir-fry': {
+    name: 'Курка з овочами у вок-стилі',
+    description: 'Швидка поживна страва з куркою та хрусткими овочами.',
+    ingredients: [
+      { name: 'Куряча грудка', quantity: '200 г' }, { name: 'Броколі', quantity: '2 склянки' }, { name: 'Перець', quantity: '1 нарізаний' },
+      { name: 'Морква', quantity: '1 нарізана' }, { name: 'Часник', quantity: '2 зубчики' }, { name: 'Соєвий соус', quantity: '2 ст. л.' }, { name: 'Рис', quantity: '1 склянка готового' },
+    ],
+    steps: ['Наріжте курку тонкими смужками і злегка приправте.', 'Обсмажте курку на гарячій пательні до золотистої скоринки.', 'Додайте броколі, перець, моркву та часник.', 'Влийте соєвий соус і готуйте до блиску та м’якості.', 'Подавайте з рисом.'],
+  },
+  'lentil-coconut-curry': {
+    name: 'Сочевичне кокосове карі', description: 'Зігрівальне карі з сочевицею та шпинатом.',
+    ingredients: [{ name: 'Червона сочевиця', quantity: '1 склянка' }, { name: 'Кокосове молоко', quantity: '1 банка' }, { name: 'Шпинат', quantity: '2 склянки' }, { name: 'Цибуля', quantity: '1 нарізана' }, { name: 'Часник', quantity: '2 зубчики' }, { name: 'Порошок каррі', quantity: '2 ч. л.' }, { name: 'Рис', quantity: '1,5 склянки готового' }],
+    steps: ['Обсмажте цибулю та часник до появи аромату.', 'Додайте карі й добре перемішайте.', 'Додайте сочевицю та кокосове молоко і тушкуйте до загустіння.', 'Вмішайте шпинат і готуйте до м’якості.', 'Подавайте з рисом.'],
+  },
+  'vegan-chickpea-salad-wraps': {
+    name: 'Роли з салатом із нуту', description: 'Свіжі поживні роли з хрусткими овочами.',
+    ingredients: [{ name: 'Нут', quantity: '1 склянка' }, { name: 'Помідор', quantity: '1 нарізаний' }, { name: 'Огірок', quantity: '1 нарізаний' }, { name: 'Листя салату', quantity: '2 листки' }, { name: 'Лаваш', quantity: '2 шт.' }, { name: 'Лимонний сік', quantity: '1 ст. л.' }, { name: 'Оливкова олія', quantity: '1 ст. л.' }],
+    steps: ['Злегка розімніть нут з оливковою олією та лимонним соком.', 'Додайте помідор і огірок.', 'Розкладіть лаваш і додайте листя салату.', 'Викладіть начинку та щільно загорніть.', 'Подавайте одразу або візьміть із собою.'],
+  },
+  'salmon-quinoa-bowl': {
+    name: 'Боул із лососем та кіноа', description: 'Поживна миска з лососем, кіноа та зеленню.',
+    ingredients: [{ name: 'Філе лосося', quantity: '2 філе' }, { name: 'Кіноа', quantity: '1 склянка готової' }, { name: 'Шпинат', quantity: '2 склянки' }, { name: 'Огірок', quantity: '1 нарізаний' }, { name: 'Черрі', quantity: '1 склянка' }, { name: 'Лимон', quantity: '1 шт.' }],
+    steps: ['Зваріть кіноа за інструкцією на пакуванні.', 'Запечіть або обсмажте лосось до готовності.', 'Змішайте шпинат, огірок і помідори.', 'Розкладіть кіноа та зелень по мисках.', 'Додайте лосось і сік лимона перед подачею.'],
+  },
+  'tofu-noodle-soup': {
+    name: 'Суп з тофу та локшиною', description: 'Зігрівальний суп з локшиною, тофу та зеленню.',
+    ingredients: [{ name: 'Тофу', quantity: '150 г' }, { name: 'Рисова локшина', quantity: '100 г' }, { name: 'Гриби', quantity: '1 склянка' }, { name: 'Шпинат', quantity: '1 склянка' }, { name: 'Імбир', quantity: '1 ст. л. тертого' }, { name: 'Часник', quantity: '2 зубчики' }, { name: 'Овочевий бульйон', quantity: '2 склянки' }],
+    steps: ['Підігрійте бульйон із часником та імбиром.', 'Додайте гриби й варіть до м’якості.', 'Додайте тофу та локшину і варіть до готовності локшини.', 'Вмішайте шпинат перед подачею.', 'Спробуйте та відрегулюйте смак.'],
+  },
+  'caprese-pasta-salad': {
+    name: 'Салат з пастою Капрезе', description: 'Свіжий салат із пастою, базиліком і помідорами.',
+    ingredients: [{ name: 'Макарони', quantity: '200 г готових' }, { name: 'Помідор', quantity: '1 склянка нарізаних' }, { name: 'Моцарела', quantity: '100 г' }, { name: 'Базилік', quantity: '1/4 склянки' }, { name: 'Оливкова олія', quantity: '2 ст. л.' }, { name: 'Бальзамічний оцет', quantity: '1 ст. л.' }],
+    steps: ['Зваріть пасту та трохи охолодіть.', 'Змішайте помідор, моцарелу, базилік і пасту.', 'Заправте оливковою олією та бальзамічним оцтом.', 'Обережно перемішайте.', 'Охолодіть або подавайте одразу.'],
+  },
+  'turkey-avocado-wrap': {
+    name: 'Рол з індичкою та авокадо', description: 'Швидкий рол із нежирним білком для насиченого дня.',
+    ingredients: [{ name: 'Шматочки індички', quantity: '4 шматочки' }, { name: 'Авокадо', quantity: '1/2 шт.' }, { name: 'Листя салату', quantity: '2 листки' }, { name: 'Помідор', quantity: '1 нарізаний' }, { name: 'Лаваш', quantity: '1 шт.' }, { name: 'Гірчиця', quantity: '1 ст. л.' }],
+    steps: ['Намажте лаваш гірчицею.', 'Викладіть салат, індичку, помідор та авокадо.', 'Щільно загорніть рол.', 'Розріжте навпіл і подавайте.'],
+  },
+  'greek-omelette': {
+    name: 'Грецький омлет', description: 'Простий омлет на пательні з середземноморськими смаками.',
+    ingredients: [{ name: 'Яйця', quantity: '3 шт.' }, { name: 'Фета', quantity: '40 г' }, { name: 'Помідор', quantity: '1 нарізаний' }, { name: 'Оливки', quantity: '10 шт.' }, { name: 'Шпинат', quantity: '1 склянка' }, { name: 'Оливкова олія', quantity: '1 ч. л.' }],
+    steps: ['Збийте яйця в мисці.', 'Швидко обсмажте шпинат на антипригарній пательні.', 'Влийте яйця та готуйте до часткового застигання.', 'Викладіть помідор, оливки й фету на одну половину.', 'Складіть омлет і подавайте теплим.'],
+  },
+  'vegan-quinoa-salad': {
+    name: 'Поживний салат з кіноа', description: 'Свіжий салат із кіноа, зеленню та хрусткими овочами.',
+    ingredients: [{ name: 'Кіноа', quantity: '1 склянка готової' }, { name: 'Шпинат', quantity: '2 склянки' }, { name: 'Огірок', quantity: '1 нарізаний' }, { name: 'Перець', quantity: '1 нарізаний' }, { name: 'Гарбузове насіння', quantity: '2 ст. л.' }, { name: 'Лимонний сік', quantity: '1 ст. л.' }],
+    steps: ['Змішайте кіноа, шпинат, огірок і перець у великій мисці.', 'Заправте лимонним соком та за бажанням оливковою олією.', 'Посипте гарбузовим насінням.', 'Подавайте одразу або охолодіть.'],
+  },
+  'garlic-mushroom-pasta': {
+    name: 'Паста з часником і грибами', description: 'Швидка пікантна вечеря з пастою та грибами.',
+    ingredients: [{ name: 'Макарони', quantity: '180 г' }, { name: 'Гриби', quantity: '2 склянки' }, { name: 'Часник', quantity: '3 зубчики' }, { name: 'Пармезан', quantity: '40 г' }, { name: 'Оливкова олія', quantity: '1 ст. л.' }, { name: 'Шпинат', quantity: '1 склянка' }],
+    steps: ['Відваріть пасту до готовності.', 'Обсмажте гриби та часник в оливковій олії.', 'Додайте шпинат і готуйте до м’якості.', 'Змішайте пасту із соусом і пармезаном.', 'Подавайте теплою.'],
+  },
+  'mango-chia-parfait': {
+    name: 'Парфе з манго та чіа', description: 'Швидкий сніданок із фруктами та насінням.',
+    ingredients: [{ name: 'Манго', quantity: '1 нарізане' }, { name: 'Насіння чіа', quantity: '2 ст. л.' }, { name: 'Кокосовий йогурт', quantity: '1 склянка' }, { name: 'Гранола', quantity: '1/4 склянки' }, { name: 'Кокосове молоко', quantity: '1/2 склянки' }],
+    steps: ['Змішайте чіа з кокосовим молоком і залиште загуснути.', 'Викладіть шарами йогурт, манго та суміш чіа у склянку.', 'Додайте гранолу.', 'Подавайте одразу або охолодіть.'],
+  },
+  'beef-veggie-skillet': {
+    name: 'Яловичина з овочами на пательні', description: 'Поживна вечеря з яловичиною та зеленню.',
+    ingredients: [{ name: 'Яловичий фарш', quantity: '200 г' }, { name: 'Цибуля', quantity: '1 нарізана' }, { name: 'Перець', quantity: '1 нарізаний' }, { name: 'Шпинат', quantity: '1 склянка' }, { name: 'Часник', quantity: '2 зубчики' }, { name: 'Помідор', quantity: '1 нарізаний' }],
+    steps: ['Підсмажте фарш на гарячій пательні.', 'Додайте цибулю, перець і часник та готуйте до м’якості.', 'Додайте помідор і шпинат.', 'Готуйте, доки все не стане гарячим і блискучим.', 'Подавайте окремо або з рисом.'],
+  },
+  'scrambled-eggs': {
+    name: 'Яєчня-бовтанка', description: 'Проста домашня яєчня за кілька хвилин.',
+    ingredients: [{ name: 'Яйця', quantity: '2 шт.' }],
+    steps: ['Збийте яйця в мисці.', 'Вилийте на теплу змащену пательню.', 'Помішуйте до м’якої готовності та подавайте.'],
+  },
+  'steamed-rice': {
+    name: 'Варений рис', description: 'Базовий розсипчастий рис як простий гарнір.',
+    ingredients: [{ name: 'Рис', quantity: '1 склянка' }],
+    steps: ['Промийте рис.', 'Зваріть до м’якості за інструкцією на пакуванні.', 'Дайте постояти кілька хвилин і подавайте.'],
+  },
+  'avocado-toast': {
+    name: 'Тост з авокадо', description: 'Швидкий поживний тост із кремовим авокадо.',
+    ingredients: [{ name: 'Хліб', quantity: '1 скибка' }, { name: 'Авокадо', quantity: '1/2 шт.' }],
+    steps: ['Підсмажте хліб.', 'Розімніть авокадо виделкою.', 'Намажте авокадо на тост і подавайте.'],
+  },
+  'garlic-butter-pasta': {
+    name: 'Паста з часником', description: 'Проста паста з ароматним часником і маслом.',
+    ingredients: [{ name: 'Макарони', quantity: '150 г' }, { name: 'Часник', quantity: '1 зубчик' }, { name: 'Масло', quantity: '1 ст. л.' }],
+    steps: ['Відваріть макарони до готовності.', 'Розтопіть масло та прогрійте в ньому часник.', 'Перемішайте макарони з часниковим маслом і подавайте.'],
+  },
+  'fried-eggs-tomatoes': {
+    name: 'Яєчня з помідорами', description: 'Швидкий сніданок із яйцями та соковитими помідорами.',
+    ingredients: [{ name: 'Яйця', quantity: '2 шт.' }, { name: 'Помідор', quantity: '1 шт.' }],
+    steps: ['Наріжте помідор і прогрійте на пательні.', 'Розбийте зверху яйця.', 'Готуйте до бажаного стану яєць і подавайте.'],
+  },
+  'boiled-broccoli': {
+    name: 'Відварна броколі', description: 'Легкий овочевий гарнір із ніжної броколі.',
+    ingredients: [{ name: 'Броколі', quantity: '2 склянки' }],
+    steps: ['Розділіть броколі на суцвіття.', 'Відваріть до яскравого кольору та м’якості.', 'Злийте воду і подавайте теплою.'],
+  },
+}
 
 export const recipes: Recipe[] = [
+  {
+    id: 'scrambled-eggs',
+    name: 'Scrambled Eggs',
+    description: 'Simple homemade scrambled eggs ready in minutes.',
+    uk: ukrainianContent['scrambled-eggs'],
+    image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=1600&q=85',
+    prepTimeMinutes: 5,
+    difficulty: 'Easy',
+    servings: 1,
+    dietaryTags: ['vegetarian', 'gluten-free'],
+    ingredients: [{ name: 'Eggs', quantity: '2' }],
+    steps: ['Whisk the eggs in a bowl.', 'Pour them into a warm greased pan.', 'Stir gently until softly set and serve.'],
+  },
+  {
+    id: 'steamed-rice',
+    name: 'Steamed Rice',
+    description: 'Simple fluffy rice for an everyday side dish.',
+    uk: ukrainianContent['steamed-rice'],
+    image: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?auto=format&fit=crop&w=1600&q=85',
+    prepTimeMinutes: 20,
+    difficulty: 'Easy',
+    servings: 2,
+    dietaryTags: ['vegan', 'gluten-free'],
+    ingredients: [{ name: 'Rice', quantity: '1 cup' }],
+    steps: ['Rinse the rice.', 'Cook until tender according to the package directions.', 'Rest for a few minutes and serve.'],
+  },
+  {
+    id: 'avocado-toast',
+    name: 'Avocado Toast',
+    description: 'Quick nourishing toast with creamy avocado.',
+    uk: ukrainianContent['avocado-toast'],
+    image: 'https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?auto=format&fit=crop&w=1600&q=85',
+    prepTimeMinutes: 5,
+    difficulty: 'Easy',
+    servings: 1,
+    dietaryTags: ['vegan'],
+    ingredients: [{ name: 'Bread', quantity: '1 slice' }, { name: 'Avocado', quantity: '1/2' }],
+    steps: ['Toast the bread.', 'Mash the avocado with a fork.', 'Spread it over the toast and serve.'],
+  },
+  {
+    id: 'garlic-butter-pasta',
+    name: 'Garlic Butter Pasta',
+    description: 'Simple pasta with fragrant garlic and butter.',
+    uk: ukrainianContent['garlic-butter-pasta'],
+    image: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=1600&q=85',
+    prepTimeMinutes: 15,
+    difficulty: 'Easy',
+    servings: 1,
+    dietaryTags: ['vegetarian'],
+    ingredients: [{ name: 'Pasta', quantity: '150g' }, { name: 'Garlic', quantity: '1 clove' }, { name: 'Butter', quantity: '1 tbsp' }],
+    steps: ['Boil the pasta until tender.', 'Melt the butter and warm the garlic in it.', 'Toss the pasta with the garlic butter and serve.'],
+  },
+  {
+    id: 'fried-eggs-tomatoes',
+    name: 'Fried Eggs with Tomatoes',
+    description: 'Quick breakfast with eggs and juicy tomatoes.',
+    uk: ukrainianContent['fried-eggs-tomatoes'],
+    image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=85',
+    prepTimeMinutes: 10,
+    difficulty: 'Easy',
+    servings: 1,
+    dietaryTags: ['vegetarian', 'gluten-free'],
+    ingredients: [{ name: 'Eggs', quantity: '2' }, { name: 'Tomato', quantity: '1' }],
+    steps: ['Slice the tomato and warm it in a pan.', 'Crack the eggs over the tomato.', 'Cook to your preferred doneness and serve.'],
+  },
+  {
+    id: 'boiled-broccoli',
+    name: 'Boiled Broccoli',
+    description: 'Light vegetable side dish with tender broccoli.',
+    uk: ukrainianContent['boiled-broccoli'],
+    image: 'https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?auto=format&fit=crop&w=1600&q=85',
+    prepTimeMinutes: 10,
+    difficulty: 'Easy',
+    servings: 2,
+    dietaryTags: ['vegan', 'vegetarian', 'gluten-free'],
+    ingredients: [{ name: 'Broccoli', quantity: '2 cups' }],
+    steps: ['Cut the broccoli into florets.', 'Boil until bright green and tender.', 'Drain and serve warm.'],
+  },
   {
     id: 'veggie-burrito-bowl',
     name: 'Veggie Burrito Bowl',
     description: 'A colourful bowl with rice, beans, and roasted vegetables.',
-    image: makePlaceholder('Burrito Bowl', '#166534'),
+    uk: ukrainianContent['veggie-burrito-bowl'],
+    image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1600&q=85',
     prepTimeMinutes: 25,
     difficulty: 'Easy',
     servings: 2,
@@ -40,7 +217,8 @@ export const recipes: Recipe[] = [
     id: 'chicken-vegetable-stir-fry',
     name: 'Chicken Veg Stir-Fry',
     description: 'A quick protein-packed stir-fry with crunchy veg.',
-    image: makePlaceholder('Stir Fry', '#1d4ed8'),
+    uk: ukrainianContent['chicken-vegetable-stir-fry'],
+    image: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=1600&q=85',
     prepTimeMinutes: 20,
     difficulty: 'Easy',
     servings: 2,
@@ -66,7 +244,8 @@ export const recipes: Recipe[] = [
     id: 'lentil-coconut-curry',
     name: 'Lentil Coconut Curry',
     description: 'Comforting curry with lentils and spinach.',
-    image: makePlaceholder('Curry', '#7c3aed'),
+    uk: ukrainianContent['lentil-coconut-curry'],
+    image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1600&q=85',
     prepTimeMinutes: 35,
     difficulty: 'Medium',
     servings: 3,
@@ -92,7 +271,8 @@ export const recipes: Recipe[] = [
     id: 'vegan-chickpea-salad-wraps',
     name: 'Chickpea Salad Wraps',
     description: 'Fresh and filling wraps with crunchy vegetables.',
-    image: makePlaceholder('Wraps', '#0f766e'),
+    uk: ukrainianContent['vegan-chickpea-salad-wraps'],
+    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1600&q=85',
     prepTimeMinutes: 15,
     difficulty: 'Easy',
     servings: 2,
@@ -118,7 +298,8 @@ export const recipes: Recipe[] = [
     id: 'salmon-quinoa-bowl',
     name: 'Salmon Quinoa Bowl',
     description: 'Nutritious bowl with salmon, quinoa, and greens.',
-    image: makePlaceholder('Salmon Bowl', '#ea580c'),
+    uk: ukrainianContent['salmon-quinoa-bowl'],
+    image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=1600&q=85',
     prepTimeMinutes: 30,
     difficulty: 'Medium',
     servings: 2,
@@ -143,7 +324,8 @@ export const recipes: Recipe[] = [
     id: 'tofu-noodle-soup',
     name: 'Tofu Noodle Soup',
     description: 'A warming noodle soup with tofu and greens.',
-    image: makePlaceholder('Soup', '#0284c7'),
+    uk: ukrainianContent['tofu-noodle-soup'],
+    image: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=1600&q=85',
     prepTimeMinutes: 20,
     difficulty: 'Easy',
     servings: 2,
@@ -169,7 +351,8 @@ export const recipes: Recipe[] = [
     id: 'caprese-pasta-salad',
     name: 'Caprese Pasta Salad',
     description: 'Fresh pasta salad with basil and tomatoes.',
-    image: makePlaceholder('Pasta Salad', '#f59e0b'),
+    uk: ukrainianContent['caprese-pasta-salad'],
+    image: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=1600&q=85',
     prepTimeMinutes: 15,
     difficulty: 'Easy',
     servings: 3,
@@ -194,7 +377,8 @@ export const recipes: Recipe[] = [
     id: 'turkey-avocado-wrap',
     name: 'Turkey Avocado Wrap',
     description: 'A quick wrap for busy days with lean protein.',
-    image: makePlaceholder('Wrap', '#d97706'),
+    uk: ukrainianContent['turkey-avocado-wrap'],
+    image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=1600&q=85',
     prepTimeMinutes: 10,
     difficulty: 'Easy',
     servings: 1,
@@ -218,7 +402,8 @@ export const recipes: Recipe[] = [
     id: 'greek-omelette',
     name: 'Greek Omelette',
     description: 'Simple skillet omelette with Mediterranean flavours.',
-    image: makePlaceholder('Omelette', '#dc2626'),
+    uk: ukrainianContent['greek-omelette'],
+    image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=1600&q=85',
     prepTimeMinutes: 15,
     difficulty: 'Easy',
     servings: 1,
@@ -243,7 +428,8 @@ export const recipes: Recipe[] = [
     id: 'vegan-quinoa-salad',
     name: 'Quinoa Power Salad',
     description: 'Fresh salad with quinoa, greens, and crunchy veg.',
-    image: makePlaceholder('Power Salad', '#16a34a'),
+    uk: ukrainianContent['vegan-quinoa-salad'],
+    image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1600&q=85',
     prepTimeMinutes: 20,
     difficulty: 'Easy',
     servings: 2,
@@ -267,7 +453,8 @@ export const recipes: Recipe[] = [
     id: 'garlic-mushroom-pasta',
     name: 'Garlic Mushroom Pasta',
     description: 'A quick, savoury pasta dinner with mushrooms.',
-    image: makePlaceholder('Mushroom Pasta', '#9a5b35'),
+    uk: ukrainianContent['garlic-mushroom-pasta'],
+    image: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=1600&q=85',
     prepTimeMinutes: 25,
     difficulty: 'Medium',
     servings: 2,
@@ -292,7 +479,8 @@ export const recipes: Recipe[] = [
     id: 'mango-chia-parfait',
     name: 'Mango Chia Parfait',
     description: 'A quick breakfast parfait with fruit and seeds.',
-    image: makePlaceholder('Parfait', '#f97316'),
+    uk: ukrainianContent['mango-chia-parfait'],
+    image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=1600&q=85',
     prepTimeMinutes: 10,
     difficulty: 'Easy',
     servings: 1,
@@ -315,7 +503,8 @@ export const recipes: Recipe[] = [
     id: 'beef-veggie-skillet',
     name: 'Beef Veggie Skillet',
     description: 'Savory skillet dinner with beef and greens.',
-    image: makePlaceholder('Skillet', '#991b1b'),
+    uk: ukrainianContent['beef-veggie-skillet'],
+    image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1600&q=85',
     prepTimeMinutes: 30,
     difficulty: 'Medium',
     servings: 2,
@@ -336,10 +525,164 @@ export const recipes: Recipe[] = [
       'Serve as is or with rice.',
     ],
   },
+  {
+    id: 'boiled-eggs', name: 'Boiled Eggs', description: 'Simple boiled eggs for breakfast or a snack.', uk: { name: 'Варені яйця', description: 'Прості варені яйця для сніданку або перекусу.', ingredients: [{ name: 'Яйця', quantity: '2 шт.' }], steps: ['Покладіть яйця у воду.', 'Варіть до бажаної готовності.', 'Охолодіть, очистіть і подавайте.'] }, image: 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 10, difficulty: 'Easy', servings: 1, dietaryTags: ['vegetarian', 'gluten-free'], ingredients: [{ name: 'Eggs', quantity: '2' }], steps: ['Place the eggs in water.', 'Boil to your preferred doneness.', 'Cool, peel, and serve.'],
+  },
+  {
+    id: 'baked-broccoli', name: 'Baked Broccoli', description: 'Tender roasted broccoli with a little olive oil.', uk: { name: 'Запечена броколі', description: 'Ніжна запечена броколі з невеликою кількістю оливкової олії.', ingredients: [{ name: 'Броколі', quantity: '2 склянки' }, { name: 'Оливкова олія', quantity: '1 ст. л.' }], steps: ['Розділіть броколі на суцвіття.', 'Перемішайте з оливковою олією.', 'Запікайте до м’якості та золотистих країв.'] }, image: 'https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 20, difficulty: 'Easy', servings: 2, dietaryTags: ['vegan', 'vegetarian', 'gluten-free'], ingredients: [{ name: 'Broccoli', quantity: '2 cups' }, { name: 'Olive oil', quantity: '1 tbsp' }], steps: ['Cut the broccoli into florets.', 'Toss with olive oil.', 'Bake until tender and lightly browned.'],
+  },
+  {
+    id: 'rice-avocado-bowl', name: 'Rice and Avocado Bowl', description: 'A quick bowl of rice and creamy avocado.', uk: { name: 'Боул із рисом та авокадо', description: 'Швидка миска з рисом і кремовим авокадо.', ingredients: [{ name: 'Рис', quantity: '1 склянка' }, { name: 'Авокадо', quantity: '1/2 шт.' }], steps: ['Зваріть рис.', 'Наріжте авокадо.', 'Покладіть авокадо на рис і подавайте.'] }, image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 15, difficulty: 'Easy', servings: 1, dietaryTags: ['vegan', 'gluten-free'], ingredients: [{ name: 'Rice', quantity: '1 cup' }, { name: 'Avocado', quantity: '1/2' }], steps: ['Cook the rice.', 'Slice the avocado.', 'Serve the avocado over the rice.'],
+  },
+  {
+    id: 'tomato-cucumber-salad', name: 'Tomato Cucumber Salad', description: 'A crisp everyday salad with fresh vegetables.', uk: { name: 'Салат з помідора та огірка', description: 'Хрусткий щоденний салат зі свіжих овочів.', ingredients: [{ name: 'Помідор', quantity: '1 шт.' }, { name: 'Огірок', quantity: '1 шт.' }, { name: 'Оливкова олія', quantity: '1 ч. л.' }], steps: ['Наріжте помідор та огірок.', 'Змішайте овочі з оливковою олією.', 'Подавайте свіжим.'] }, image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 5, difficulty: 'Easy', servings: 2, dietaryTags: ['vegan', 'vegetarian', 'gluten-free'], ingredients: [{ name: 'Tomato', quantity: '1' }, { name: 'Cucumber', quantity: '1' }, { name: 'Olive oil', quantity: '1 tsp' }], steps: ['Chop the tomato and cucumber.', 'Toss with olive oil.', 'Serve fresh.'],
+  },
+  {
+    id: 'buttered-rice', name: 'Buttered Rice', description: 'Comforting rice finished with butter.', uk: { name: 'Рис з маслом', description: 'Домашній рис, доповнений вершковим маслом.', ingredients: [{ name: 'Рис', quantity: '1 склянка' }, { name: 'Масло', quantity: '1 ст. л.' }], steps: ['Зваріть рис до м’якості.', 'Додайте масло до гарячого рису.', 'Перемішайте та подавайте.'] }, image: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 20, difficulty: 'Easy', servings: 2, dietaryTags: ['vegetarian', 'gluten-free'], ingredients: [{ name: 'Rice', quantity: '1 cup' }, { name: 'Butter', quantity: '1 tbsp' }], steps: ['Cook the rice until tender.', 'Stir butter into the hot rice.', 'Mix and serve.'],
+  },
+  {
+    id: 'garlic-bread', name: 'Garlic Bread', description: 'Crisp bread with warm garlic butter.', uk: { name: 'Часниковий хліб', description: 'Хрусткий хліб із теплим часниковим маслом.', ingredients: [{ name: 'Хліб', quantity: '2 скибки' }, { name: 'Часник', quantity: '1 зубчик' }, { name: 'Масло', quantity: '1 ст. л.' }], steps: ['Змішайте масло з подрібненим часником.', 'Намажте хліб.', 'Запечіть до хрусткої скоринки.'] }, image: 'https://images.unsplash.com/photo-1573140401552-3fab0b24306f?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 10, difficulty: 'Easy', servings: 1, dietaryTags: ['vegetarian'], ingredients: [{ name: 'Bread', quantity: '2 slices' }, { name: 'Garlic', quantity: '1 clove' }, { name: 'Butter', quantity: '1 tbsp' }], steps: ['Mix butter with minced garlic.', 'Spread it over the bread.', 'Bake until crisp.'],
+  },
+  {
+    id: 'tomato-onion-omelette', name: 'Tomato Onion Omelette', description: 'Soft eggs with tomato and onion.', uk: { name: 'Омлет з помідором і цибулею', description: 'Ніжні яйця з помідором та цибулею.', ingredients: [{ name: 'Яйця', quantity: '2 шт.' }, { name: 'Помідор', quantity: '1 шт.' }, { name: 'Цибуля', quantity: '1/4 шт.' }], steps: ['Збийте яйця.', 'Обсмажте цибулю та помідор.', 'Додайте яйця і готуйте до готовності.'] }, image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 10, difficulty: 'Easy', servings: 1, dietaryTags: ['vegetarian', 'gluten-free'], ingredients: [{ name: 'Eggs', quantity: '2' }, { name: 'Tomato', quantity: '1' }, { name: 'Onion', quantity: '1/4' }], steps: ['Whisk the eggs.', 'Cook the onion and tomato.', 'Add the eggs and cook until set.'],
+  },
+  {
+    id: 'chickpea-cucumber-salad', name: 'Chickpea Cucumber Salad', description: 'Fresh chickpeas with cucumber and lemon.', uk: { name: 'Салат з нуту та огірка', description: 'Свіжий нут з огірком і лимоном.', ingredients: [{ name: 'Нут', quantity: '1 склянка' }, { name: 'Огірок', quantity: '1 шт.' }, { name: 'Лимонний сік', quantity: '1 ст. л.' }], steps: ['Наріжте огірок.', 'Змішайте з нутом.', 'Додайте лимонний сік і перемішайте.'] }, image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 10, difficulty: 'Easy', servings: 2, dietaryTags: ['vegan', 'gluten-free'], ingredients: [{ name: 'Chickpeas', quantity: '1 cup' }, { name: 'Cucumber', quantity: '1' }, { name: 'Lemon juice', quantity: '1 tbsp' }], steps: ['Chop the cucumber.', 'Toss with chickpeas.', 'Add lemon juice and mix.'],
+  },
+  {
+    id: 'tomato-mozzarella', name: 'Tomato Mozzarella Plate', description: 'A simple plate of tomato, mozzarella, and basil.', uk: { name: 'Помідори з моцарелою', description: 'Проста страва з помідора, моцарели та базиліку.', ingredients: [{ name: 'Помідор', quantity: '1 шт.' }, { name: 'Моцарела', quantity: '100 г' }, { name: 'Базилік', quantity: 'кілька листків' }], steps: ['Наріжте помідор і моцарелу.', 'Викладіть їх на тарілку.', 'Додайте базилік і подавайте.'] }, image: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 5, difficulty: 'Easy', servings: 2, dietaryTags: ['vegetarian', 'gluten-free'], ingredients: [{ name: 'Tomato', quantity: '1' }, { name: 'Mozzarella', quantity: '100g' }, { name: 'Basil', quantity: 'a few leaves' }], steps: ['Slice the tomato and mozzarella.', 'Arrange them on a plate.', 'Add basil and serve.'],
+  },
+  {
+    id: 'garlic-mushrooms', name: 'Garlic Mushrooms', description: 'Savoury mushrooms cooked with garlic and butter.', uk: { name: 'Гриби з часником', description: 'Ароматні гриби, обсмажені з часником і маслом.', ingredients: [{ name: 'Гриби', quantity: '2 склянки' }, { name: 'Часник', quantity: '2 зубчики' }, { name: 'Масло', quantity: '1 ст. л.' }], steps: ['Наріжте гриби.', 'Розтопіть масло та обсмажте часник.', 'Додайте гриби і готуйте до м’якості.'] }, image: 'https://images.unsplash.com/photo-1504544750208-dc0358e63f7f?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 10, difficulty: 'Easy', servings: 2, dietaryTags: ['vegetarian', 'gluten-free'], ingredients: [{ name: 'Mushrooms', quantity: '2 cups' }, { name: 'Garlic', quantity: '2 cloves' }, { name: 'Butter', quantity: '1 tbsp' }], steps: ['Slice the mushrooms.', 'Melt butter and cook the garlic.', 'Add mushrooms and cook until tender.'],
+  },
+  {
+    id: 'spinach-eggs', name: 'Spinach Eggs', description: 'A quick skillet breakfast with eggs and spinach.', uk: { name: 'Яйця зі шпинатом', description: 'Швидкий сніданок на пательні з яйцями та шпинатом.', ingredients: [{ name: 'Яйця', quantity: '2 шт.' }, { name: 'Шпинат', quantity: '1 склянка' }, { name: 'Оливкова олія', quantity: '1 ч. л.' }], steps: ['Швидко обсмажте шпинат в олії.', 'Додайте яйця.', 'Готуйте до бажаної готовності.'] }, image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 8, difficulty: 'Easy', servings: 1, dietaryTags: ['vegetarian', 'gluten-free'], ingredients: [{ name: 'Eggs', quantity: '2' }, { name: 'Spinach', quantity: '1 cup' }, { name: 'Olive oil', quantity: '1 tsp' }], steps: ['Quickly cook the spinach in oil.', 'Add the eggs.', 'Cook to your preferred doneness.'],
+  },
+  {
+    id: 'rice-and-beans', name: 'Rice and Beans', description: 'A filling everyday bowl with rice and beans.', uk: { name: 'Рис із квасолею', description: 'Поживна домашня миска з рисом і квасолею.', ingredients: [{ name: 'Рис', quantity: '1 склянка' }, { name: 'Чорні боби', quantity: '1 склянка' }, { name: 'Кмин', quantity: '1/2 ч. л.' }], steps: ['Зваріть рис.', 'Прогрійте боби з кмином.', 'Подавайте боби на рисі.'] }, image: 'https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 20, difficulty: 'Easy', servings: 2, dietaryTags: ['vegan', 'gluten-free'], ingredients: [{ name: 'Rice', quantity: '1 cup' }, { name: 'Black beans', quantity: '1 cup' }, { name: 'Cumin', quantity: '1/2 tsp' }], steps: ['Cook the rice.', 'Warm the beans with cumin.', 'Serve the beans over rice.'],
+  },
+  {
+    id: 'avocado-cucumber-salad', name: 'Avocado Cucumber Salad', description: 'Cool cucumber and creamy avocado salad.', uk: { name: 'Салат з авокадо та огірка', description: 'Освіжальний салат з огірком і кремовим авокадо.', ingredients: [{ name: 'Авокадо', quantity: '1 шт.' }, { name: 'Огірок', quantity: '1 шт.' }, { name: 'Лайм', quantity: 'сік 1/2 лайма' }], steps: ['Наріжте авокадо та огірок.', 'Додайте сік лайма.', 'Обережно перемішайте.'] }, image: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 8, difficulty: 'Easy', servings: 2, dietaryTags: ['vegan', 'gluten-free'], ingredients: [{ name: 'Avocado', quantity: '1' }, { name: 'Cucumber', quantity: '1' }, { name: 'Lime', quantity: '1/2 juice' }], steps: ['Slice the avocado and cucumber.', 'Add lime juice.', 'Toss gently.'],
+  },
+  {
+    id: 'lemon-quinoa', name: 'Lemon Quinoa', description: 'Fluffy quinoa brightened with lemon juice.', uk: { name: 'Кіноа з лимоном', description: 'Розсипчаста кіноа з яскравим лимонним соком.', ingredients: [{ name: 'Кіноа', quantity: '1 склянка' }, { name: 'Лимонний сік', quantity: '1 ст. л.' }], steps: ['Зваріть кіноа.', 'Додайте лимонний сік.', 'Перемішайте та подавайте.'] }, image: 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 20, difficulty: 'Easy', servings: 2, dietaryTags: ['vegan', 'gluten-free'], ingredients: [{ name: 'Quinoa', quantity: '1 cup' }, { name: 'Lemon juice', quantity: '1 tbsp' }], steps: ['Cook the quinoa.', 'Add lemon juice.', 'Mix and serve.'],
+  },
+  {
+    id: 'butter-pasta', name: 'Butter Pasta', description: 'Silky pasta tossed with butter and Parmesan.', uk: { name: 'Паста з маслом', description: 'Ніжна паста з маслом і пармезаном.', ingredients: [{ name: 'Макарони', quantity: '150 г' }, { name: 'Масло', quantity: '1 ст. л.' }, { name: 'Пармезан', quantity: '1 ст. л.' }], steps: ['Відваріть пасту.', 'Додайте масло до гарячої пасти.', 'Посипте пармезаном і перемішайте.'] }, image: 'https://images.unsplash.com/photo-1551892374-ecf8754cf8b0?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 15, difficulty: 'Easy', servings: 1, dietaryTags: ['vegetarian'], ingredients: [{ name: 'Pasta', quantity: '150g' }, { name: 'Butter', quantity: '1 tbsp' }, { name: 'Parmesan', quantity: '1 tbsp' }], steps: ['Boil the pasta.', 'Toss butter through the hot pasta.', 'Top with Parmesan and mix.'],
+  },
+  {
+    id: 'garlic-rice', name: 'Garlic Rice', description: 'Fragrant rice with lightly toasted garlic.', uk: { name: 'Рис із часником', description: 'Ароматний рис із підсмаженим часником.', ingredients: [{ name: 'Рис', quantity: '1 склянка' }, { name: 'Часник', quantity: '1 зубчик' }, { name: 'Оливкова олія', quantity: '1 ч. л.' }], steps: ['Зваріть рис.', 'Прогрійте часник в оливковій олії.', 'Перемішайте з рисом.'] }, image: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 20, difficulty: 'Easy', servings: 2, dietaryTags: ['vegan', 'gluten-free'], ingredients: [{ name: 'Rice', quantity: '1 cup' }, { name: 'Garlic', quantity: '1 clove' }, { name: 'Olive oil', quantity: '1 tsp' }], steps: ['Cook the rice.', 'Warm the garlic in olive oil.', 'Toss it through the rice.'],
+  },
+  {
+    id: 'broccoli-eggs', name: 'Broccoli and Eggs', description: 'A simple skillet meal of broccoli and eggs.', uk: { name: 'Броколі з яйцями', description: 'Проста страва на пательні з броколі та яйцями.', ingredients: [{ name: 'Броколі', quantity: '1 склянка' }, { name: 'Яйця', quantity: '2 шт.' }], steps: ['Відваріть або приготуйте броколі на парі.', 'Додайте яйця на пательню.', 'Готуйте до застигання яєць.'] }, image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 12, difficulty: 'Easy', servings: 1, dietaryTags: ['vegetarian', 'gluten-free'], ingredients: [{ name: 'Broccoli', quantity: '1 cup' }, { name: 'Eggs', quantity: '2' }], steps: ['Steam or boil the broccoli.', 'Add the eggs to the pan.', 'Cook until the eggs are set.'],
+  },
+  {
+    id: 'tomato-toast', name: 'Tomato Toast', description: 'Crisp toast topped with juicy tomato.', uk: { name: 'Тост із помідором', description: 'Хрусткий тост із соковитим помідором.', ingredients: [{ name: 'Хліб', quantity: '1 скибка' }, { name: 'Помідор', quantity: '1/2 шт.' }, { name: 'Оливкова олія', quantity: '1 ч. л.' }], steps: ['Підсмажте хліб.', 'Викладіть нарізаний помідор.', 'Полийте оливковою олією.'] }, image: 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 5, difficulty: 'Easy', servings: 1, dietaryTags: ['vegan'], ingredients: [{ name: 'Bread', quantity: '1 slice' }, { name: 'Tomato', quantity: '1/2' }, { name: 'Olive oil', quantity: '1 tsp' }], steps: ['Toast the bread.', 'Top with sliced tomato.', 'Drizzle with olive oil.'],
+  },
+  {
+    id: 'chicken-rice', name: 'Chicken Rice Bowl', description: 'A straightforward bowl of chicken and rice.', uk: { name: 'Боул із куркою та рисом', description: 'Проста поживна миска з куркою та рисом.', ingredients: [{ name: 'Куряча грудка', quantity: '150 г' }, { name: 'Рис', quantity: '1 склянка' }], steps: ['Зваріть рис.', 'Обсмажте курку до повної готовності.', 'Наріжте курку і подавайте з рисом.'] }, image: 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 25, difficulty: 'Easy', servings: 1, dietaryTags: ['gluten-free'], ingredients: [{ name: 'Chicken breast', quantity: '150g' }, { name: 'Rice', quantity: '1 cup' }], steps: ['Cook the rice.', 'Pan-cook the chicken until done.', 'Slice the chicken and serve with rice.'],
+  },
+  {
+    id: 'tofu-broccoli', name: 'Tofu Broccoli Bowl', description: 'Tender tofu and broccoli for a quick vegan meal.', uk: { name: 'Боул із тофу та броколі', description: 'Ніжний тофу та броколі для швидкої веганської страви.', ingredients: [{ name: 'Тофу', quantity: '150 г' }, { name: 'Броколі', quantity: '1 склянка' }, { name: 'Соєвий соус', quantity: '1 ст. л.' }], steps: ['Обсмажте тофу.', 'Додайте броколі.', 'Полийте соєвим соусом і прогрійте.'] }, image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 15, difficulty: 'Easy', servings: 1, dietaryTags: ['vegan'], ingredients: [{ name: 'Tofu', quantity: '150g' }, { name: 'Broccoli', quantity: '1 cup' }, { name: 'Soy sauce', quantity: '1 tbsp' }], steps: ['Pan-fry the tofu.', 'Add the broccoli.', 'Finish with soy sauce and warm through.'],
+  },
+  {
+    id: 'salmon-rice', name: 'Salmon Rice Bowl', description: 'Simple salmon served over fluffy rice.', uk: { name: 'Лосось із рисом', description: 'Простий лосось, поданий на розсипчастому рисі.', ingredients: [{ name: 'Філе лосося', quantity: '1 філе' }, { name: 'Рис', quantity: '1 склянка' }, { name: 'Лимон', quantity: '1/2 шт.' }], steps: ['Зваріть рис.', 'Запечіть лосось до готовності.', 'Подавайте з рисом і лимоном.'] }, image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 25, difficulty: 'Easy', servings: 1, dietaryTags: ['gluten-free'], ingredients: [{ name: 'Salmon fillet', quantity: '1 fillet' }, { name: 'Rice', quantity: '1 cup' }, { name: 'Lemon', quantity: '1/2' }], steps: ['Cook the rice.', 'Bake the salmon until done.', 'Serve with rice and lemon.'],
+  },
+  {
+    id: 'lentil-rice', name: 'Lentil Rice Bowl', description: 'A hearty bowl of lentils and rice.', uk: { name: 'Рис із сочевицею', description: 'Поживна миска із сочевицею та рисом.', ingredients: [{ name: 'Червона сочевиця', quantity: '1/2 склянки' }, { name: 'Рис', quantity: '1 склянка' }, { name: 'Цибуля', quantity: '1/2 шт.' }], steps: ['Зваріть рис.', 'Зваріть сочевицю до м’якості.', 'Обсмажте цибулю та подайте все разом.'] }, image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 30, difficulty: 'Medium', servings: 2, dietaryTags: ['vegan', 'gluten-free'], ingredients: [{ name: 'Red lentils', quantity: '1/2 cup' }, { name: 'Rice', quantity: '1 cup' }, { name: 'Onion', quantity: '1/2' }], steps: ['Cook the rice.', 'Cook the lentils until tender.', 'Sauté the onion and serve everything together.'],
+  },
+  {
+    id: 'coconut-rice', name: 'Coconut Rice', description: 'Creamy rice made with coconut milk.', uk: { name: 'Кокосовий рис', description: 'Ніжний рис, зварений на кокосовому молоці.', ingredients: [{ name: 'Рис', quantity: '1 склянка' }, { name: 'Кокосове молоко', quantity: '1 склянка' }], steps: ['Змішайте рис із кокосовим молоком.', 'Варіть до м’якості.', 'Дайте постояти та подавайте.'] }, image: 'https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 25, difficulty: 'Easy', servings: 2, dietaryTags: ['vegan', 'gluten-free'], ingredients: [{ name: 'Rice', quantity: '1 cup' }, { name: 'Coconut milk', quantity: '1 cup' }], steps: ['Combine the rice and coconut milk.', 'Cook until tender.', 'Rest briefly and serve.'],
+  },
+  {
+    id: 'chicken-broccoli', name: 'Chicken Broccoli Skillet', description: 'Quick chicken with broccoli and garlic.', uk: { name: 'Курка з броколі на пательні', description: 'Швидка курка з броколі та часником.', ingredients: [{ name: 'Куряча грудка', quantity: '150 г' }, { name: 'Броколі', quantity: '1 склянка' }, { name: 'Часник', quantity: '1 зубчик' }], steps: ['Обсмажте курку до готовності.', 'Додайте броколі та часник.', 'Готуйте до м’якості броколі.'] }, image: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 20, difficulty: 'Easy', servings: 1, dietaryTags: ['gluten-free'], ingredients: [{ name: 'Chicken breast', quantity: '150g' }, { name: 'Broccoli', quantity: '1 cup' }, { name: 'Garlic', quantity: '1 clove' }], steps: ['Cook the chicken until done.', 'Add broccoli and garlic.', 'Cook until the broccoli is tender.'],
+  },
+  {
+    id: 'beef-rice-bowl', name: 'Beef Rice Bowl', description: 'Seasoned beef mince served with rice.', uk: { name: 'Боул із яловичиною та рисом', description: 'Приправлений яловичий фарш із рисом.', ingredients: [{ name: 'Яловичий фарш', quantity: '150 г' }, { name: 'Рис', quantity: '1 склянка' }, { name: 'Цибуля', quantity: '1/2 шт.' }], steps: ['Зваріть рис.', 'Обсмажте фарш із цибулею.', 'Подавайте яловичину з рисом.'] }, image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 25, difficulty: 'Easy', servings: 1, dietaryTags: ['gluten-free'], ingredients: [{ name: 'Beef mince', quantity: '150g' }, { name: 'Rice', quantity: '1 cup' }, { name: 'Onion', quantity: '1/2' }], steps: ['Cook the rice.', 'Brown the mince with onion.', 'Serve the beef with rice.'],
+  },
+  {
+    id: 'quinoa-chickpea-bowl', name: 'Quinoa Chickpea Bowl', description: 'A fresh vegan bowl with quinoa and chickpeas.', uk: { name: 'Боул із кіноа та нутом', description: 'Свіжа веганська миска з кіноа та нутом.', ingredients: [{ name: 'Кіноа', quantity: '1 склянка' }, { name: 'Нут', quantity: '1 склянка' }, { name: 'Огірок', quantity: '1 шт.' }], steps: ['Зваріть кіноа.', 'Наріжте огірок.', 'Змішайте кіноа, нут та огірок.'] }, image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 20, difficulty: 'Easy', servings: 2, dietaryTags: ['vegan', 'gluten-free'], ingredients: [{ name: 'Quinoa', quantity: '1 cup' }, { name: 'Chickpeas', quantity: '1 cup' }, { name: 'Cucumber', quantity: '1' }], steps: ['Cook the quinoa.', 'Chop the cucumber.', 'Toss quinoa, chickpeas, and cucumber.'],
+  },
+  {
+    id: 'tomato-garlic-pasta', name: 'Tomato Garlic Pasta', description: 'Pasta with tomato, garlic, and olive oil.', uk: { name: 'Паста з помідорами та часником', description: 'Паста з помідором, часником і оливковою олією.', ingredients: [{ name: 'Макарони', quantity: '150 г' }, { name: 'Помідор', quantity: '1 шт.' }, { name: 'Часник', quantity: '1 зубчик' }, { name: 'Оливкова олія', quantity: '1 ст. л.' }], steps: ['Відваріть пасту.', 'Прогрійте помідор і часник в олії.', 'Перемішайте з пастою.'] }, image: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 20, difficulty: 'Easy', servings: 1, dietaryTags: ['vegan', 'vegetarian'], ingredients: [{ name: 'Pasta', quantity: '150g' }, { name: 'Tomato', quantity: '1' }, { name: 'Garlic', quantity: '1 clove' }, { name: 'Olive oil', quantity: '1 tbsp' }], steps: ['Boil the pasta.', 'Warm tomato and garlic in olive oil.', 'Toss with the pasta.'],
+  },
+  {
+    id: 'mushroom-pasta', name: 'Mushroom Pasta', description: 'Cream-free pasta with savoury mushrooms.', uk: { name: 'Паста з грибами', description: 'Паста без вершків із пікантними грибами.', ingredients: [{ name: 'Макарони', quantity: '150 г' }, { name: 'Гриби', quantity: '1 склянка' }, { name: 'Часник', quantity: '1 зубчик' }], steps: ['Відваріть макарони.', 'Обсмажте гриби з часником.', 'Змішайте гриби з пастою.'] }, image: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 20, difficulty: 'Easy', servings: 1, dietaryTags: ['vegetarian'], ingredients: [{ name: 'Pasta', quantity: '150g' }, { name: 'Mushrooms', quantity: '1 cup' }, { name: 'Garlic', quantity: '1 clove' }], steps: ['Boil the pasta.', 'Sauté mushrooms with garlic.', 'Toss the mushrooms with pasta.'],
+  },
+  {
+    id: 'feta-spinach-omelette', name: 'Feta Spinach Omelette', description: 'Soft omelette with spinach and salty feta.', uk: { name: 'Омлет із фетою та шпинатом', description: 'Ніжний омлет зі шпинатом і солонуватою фетою.', ingredients: [{ name: 'Яйця', quantity: '2 шт.' }, { name: 'Фета', quantity: '40 г' }, { name: 'Шпинат', quantity: '1 склянка' }], steps: ['Обсмажте шпинат.', 'Влийте збиті яйця.', 'Додайте фету, складіть омлет і подавайте.'] }, image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 12, difficulty: 'Easy', servings: 1, dietaryTags: ['vegetarian', 'gluten-free'], ingredients: [{ name: 'Eggs', quantity: '2' }, { name: 'Feta', quantity: '40g' }, { name: 'Spinach', quantity: '1 cup' }], steps: ['Cook the spinach.', 'Pour in the beaten eggs.', 'Add feta, fold the omelette, and serve.'],
+  },
+  {
+    id: 'tofu-rice-noodles', name: 'Tofu Rice Noodles', description: 'Quick rice noodles with tofu and soy sauce.', uk: { name: 'Рисова локшина з тофу', description: 'Швидка рисова локшина з тофу та соєвим соусом.', ingredients: [{ name: 'Рисова локшина', quantity: '100 г' }, { name: 'Тофу', quantity: '100 г' }, { name: 'Соєвий соус', quantity: '1 ст. л.' }], steps: ['Приготуйте локшину.', 'Обсмажте тофу.', 'Змішайте локшину з тофу та соєвим соусом.'] }, image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 15, difficulty: 'Easy', servings: 1, dietaryTags: ['vegan'], ingredients: [{ name: 'Rice noodles', quantity: '100g' }, { name: 'Tofu', quantity: '100g' }, { name: 'Soy sauce', quantity: '1 tbsp' }], steps: ['Cook the noodles.', 'Pan-fry the tofu.', 'Toss noodles with tofu and soy sauce.'],
+  },
+  {
+    id: 'chickpea-coconut-curry', name: 'Chickpea Coconut Curry', description: 'Creamy chickpeas in a quick coconut curry.', uk: { name: 'Кокосове карі з нутом', description: 'Ніжний нут у швидкому кокосовому карі.', ingredients: [{ name: 'Нут', quantity: '1 склянка' }, { name: 'Кокосове молоко', quantity: '1 склянка' }, { name: 'Порошок каррі', quantity: '1 ч. л.' }], steps: ['Прогрійте карі на пательні.', 'Додайте нут і кокосове молоко.', 'Тушкуйте до загустіння.'] }, image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 20, difficulty: 'Easy', servings: 2, dietaryTags: ['vegan', 'gluten-free'], ingredients: [{ name: 'Chickpeas', quantity: '1 cup' }, { name: 'Coconut milk', quantity: '1 cup' }, { name: 'Curry powder', quantity: '1 tsp' }], steps: ['Warm the curry powder.', 'Add chickpeas and coconut milk.', 'Simmer until thick.'],
+  },
+  {
+    id: 'avocado-quinoa-salad', name: 'Avocado Quinoa Salad', description: 'Fresh quinoa salad with avocado and lime.', uk: { name: 'Салат із кіноа та авокадо', description: 'Свіжий салат із кіноа, авокадо та лаймом.', ingredients: [{ name: 'Кіноа', quantity: '1 склянка' }, { name: 'Авокадо', quantity: '1 шт.' }, { name: 'Лайм', quantity: 'сік 1/2 лайма' }], steps: ['Зваріть і охолодіть кіноа.', 'Додайте нарізане авокадо.', 'Полийте соком лайма і перемішайте.'] }, image: 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 15, difficulty: 'Easy', servings: 2, dietaryTags: ['vegan', 'gluten-free'], ingredients: [{ name: 'Quinoa', quantity: '1 cup' }, { name: 'Avocado', quantity: '1' }, { name: 'Lime', quantity: '1/2 juice' }], steps: ['Cook and cool the quinoa.', 'Add sliced avocado.', 'Dress with lime juice and toss.'],
+  },
+  {
+    id: 'chicken-carrot-rice', name: 'Chicken Carrot Rice', description: 'A homestyle rice bowl with chicken and carrot.', uk: { name: 'Рис із куркою та морквою', description: 'Домашня рисова миска з куркою та морквою.', ingredients: [{ name: 'Куряча грудка', quantity: '150 г' }, { name: 'Рис', quantity: '1 склянка' }, { name: 'Морква', quantity: '1 шт.' }], steps: ['Зваріть рис.', 'Обсмажте курку та моркву.', 'Подавайте разом.'] }, image: 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 25, difficulty: 'Easy', servings: 1, dietaryTags: ['gluten-free'], ingredients: [{ name: 'Chicken breast', quantity: '150g' }, { name: 'Rice', quantity: '1 cup' }, { name: 'Carrot', quantity: '1' }], steps: ['Cook the rice.', 'Pan-cook the chicken and carrot.', 'Serve together.'],
+  },
+  {
+    id: 'salmon-cucumber-salad', name: 'Salmon Cucumber Salad', description: 'Fresh salmon with crisp cucumber and lemon.', uk: { name: 'Салат із лососем та огірком', description: 'Свіжий лосось із хрустким огірком і лимоном.', ingredients: [{ name: 'Філе лосося', quantity: '1 філе' }, { name: 'Огірок', quantity: '1 шт.' }, { name: 'Лимон', quantity: '1/2 шт.' }], steps: ['Запечіть лосось.', 'Наріжте огірок.', 'Подавайте лосось з огірком і лимоном.'] }, image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 20, difficulty: 'Easy', servings: 1, dietaryTags: ['gluten-free'], ingredients: [{ name: 'Salmon fillet', quantity: '1 fillet' }, { name: 'Cucumber', quantity: '1' }, { name: 'Lemon', quantity: '1/2' }], steps: ['Bake the salmon.', 'Slice the cucumber.', 'Serve with lemon.'],
+  },
+  {
+    id: 'lentil-spinach-bowl', name: 'Lentil Spinach Bowl', description: 'Warm lentils with wilted spinach and garlic.', uk: { name: 'Боул із сочевиці та шпинату', description: 'Тепла сочевиця з м’яким шпинатом і часником.', ingredients: [{ name: 'Червона сочевиця', quantity: '1 склянка' }, { name: 'Шпинат', quantity: '1 склянка' }, { name: 'Часник', quantity: '1 зубчик' }], steps: ['Зваріть сочевицю.', 'Додайте часник і шпинат.', 'Готуйте, доки шпинат не зів’яне.'] }, image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 25, difficulty: 'Easy', servings: 2, dietaryTags: ['vegan', 'gluten-free'], ingredients: [{ name: 'Red lentils', quantity: '1 cup' }, { name: 'Spinach', quantity: '1 cup' }, { name: 'Garlic', quantity: '1 clove' }], steps: ['Cook the lentils.', 'Add garlic and spinach.', 'Cook until the spinach wilts.'],
+  },
+  {
+    id: 'corn-bean-bowl', name: 'Corn and Bean Bowl', description: 'Colourful beans and sweetcorn with lime.', uk: { name: 'Боул із кукурудзи та квасолі', description: 'Барвиста страва з квасолі, кукурудзи та лайма.', ingredients: [{ name: 'Чорні боби', quantity: '1 склянка' }, { name: 'Кукурудза', quantity: '1/2 склянки' }, { name: 'Лайм', quantity: 'сік 1/2 лайма' }], steps: ['Прогрійте боби та кукурудзу.', 'Додайте сік лайма.', 'Перемішайте та подавайте.'] }, image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 10, difficulty: 'Easy', servings: 2, dietaryTags: ['vegan', 'gluten-free'], ingredients: [{ name: 'Black beans', quantity: '1 cup' }, { name: 'Sweetcorn', quantity: '1/2 cup' }, { name: 'Lime', quantity: '1/2 juice' }], steps: ['Warm the beans and corn.', 'Add lime juice.', 'Toss and serve.'],
+  },
+  {
+    id: 'turkey-tomato-sandwich', name: 'Turkey Tomato Toast', description: 'A quick open toast with turkey and tomato.', uk: { name: 'Тост з індичкою та помідором', description: 'Швидкий відкритий тост з індичкою та помідором.', ingredients: [{ name: 'Хліб', quantity: '1 скибка' }, { name: 'Шматочки індички', quantity: '2 шматочки' }, { name: 'Помідор', quantity: '1/2 шт.' }], steps: ['Підсмажте хліб.', 'Додайте індичку та помідор.', 'Подавайте одразу.'] }, image: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 5, difficulty: 'Easy', servings: 1, dietaryTags: [], ingredients: [{ name: 'Bread', quantity: '1 slice' }, { name: 'Turkey slices', quantity: '2 slices' }, { name: 'Tomato', quantity: '1/2' }], steps: ['Toast the bread.', 'Add turkey and tomato.', 'Serve immediately.'],
+  },
+  {
+    id: 'mango-yogurt-bowl', name: 'Mango Yogurt Bowl', description: 'Creamy coconut yogurt with mango and granola.', uk: { name: 'Йогуртовий боул з манго', description: 'Кремовий кокосовий йогурт із манго та гранолою.', ingredients: [{ name: 'Манго', quantity: '1/2 шт.' }, { name: 'Кокосовий йогурт', quantity: '1 склянка' }, { name: 'Гранола', quantity: '2 ст. л.' }], steps: ['Викладіть йогурт у миску.', 'Додайте манго.', 'Посипте гранолою.'] }, image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 5, difficulty: 'Easy', servings: 1, dietaryTags: ['vegan', 'gluten-free'], ingredients: [{ name: 'Mango', quantity: '1/2' }, { name: 'Coconut yogurt', quantity: '1 cup' }, { name: 'Granola', quantity: '2 tbsp' }], steps: ['Spoon yogurt into a bowl.', 'Add mango.', 'Top with granola.'],
+  },
+  {
+    id: 'rice-noodle-vegetables', name: 'Rice Noodles with Vegetables', description: 'Quick rice noodles with broccoli and carrot.', uk: { name: 'Рисова локшина з овочами', description: 'Швидка рисова локшина з броколі та морквою.', ingredients: [{ name: 'Рисова локшина', quantity: '100 г' }, { name: 'Броколі', quantity: '1 склянка' }, { name: 'Морква', quantity: '1 шт.' }], steps: ['Приготуйте локшину.', 'Обсмажте броколі та моркву.', 'Змішайте з локшиною.'] }, image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 18, difficulty: 'Easy', servings: 1, dietaryTags: ['vegan'], ingredients: [{ name: 'Rice noodles', quantity: '100g' }, { name: 'Broccoli', quantity: '1 cup' }, { name: 'Carrot', quantity: '1' }], steps: ['Cook the noodles.', 'Stir-fry broccoli and carrot.', 'Toss with the noodles.'],
+  },
+  {
+    id: 'curry-rice-bowl', name: 'Curry Rice Bowl', description: 'Warm rice with coconut milk and curry spices.', uk: { name: 'Рисове карі', description: 'Теплий рис із кокосовим молоком і спеціями карі.', ingredients: [{ name: 'Рис', quantity: '1 склянка' }, { name: 'Кокосове молоко', quantity: '1/2 склянки' }, { name: 'Порошок каррі', quantity: '1 ч. л.' }], steps: ['Зваріть рис.', 'Прогрійте кокосове молоко з карі.', 'Полийте рис соусом.'] }, image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1600&q=85', prepTimeMinutes: 20, difficulty: 'Easy', servings: 1, dietaryTags: ['vegan', 'gluten-free'], ingredients: [{ name: 'Rice', quantity: '1 cup' }, { name: 'Coconut milk', quantity: '1/2 cup' }, { name: 'Curry powder', quantity: '1 tsp' }], steps: ['Cook the rice.', 'Warm coconut milk with curry powder.', 'Spoon the sauce over rice.'],
+  },
 ]
+
+const imageOwners = new Map<string, string>()
+recipes.forEach((recipe) => {
+  if (!imageOwners.has(recipe.image)) {
+    imageOwners.set(recipe.image, recipe.id)
+  }
+})
+
+const fallbackImageByCategory = [
+  { keywords: ['soup', 'суп', 'noodle', 'локшин'], url: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=1600&q=85' },
+  { keywords: ['pasta', 'паста', 'макарон'], url: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=1600&q=85' },
+  { keywords: ['salad', 'салат', 'quinoa', 'кіноа'], url: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1600&q=85' },
+  { keywords: ['rice', 'рис', 'bowl', 'боул'], url: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?auto=format&fit=crop&w=1600&q=85' },
+  { keywords: ['egg', 'яйц', 'omelette', 'омлет'], url: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=1600&q=85' },
+  { keywords: ['curry', 'карі'], url: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1600&q=85' },
+  { keywords: ['toast', 'тост', 'bread', 'хліб'], url: 'https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?auto=format&fit=crop&w=1600&q=85' },
+  { keywords: ['salmon', 'лосос'], url: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=1600&q=85' },
+  { keywords: ['broccoli', 'брокол'], url: 'https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?auto=format&fit=crop&w=1600&q=85' },
+]
+
+export const getRecipeImage = (recipe: Recipe) => {
+  if (imageOwners.get(recipe.image) === recipe.id) {
+    return recipe.image
+  }
+
+  const searchableTitle = `${recipe.name} ${recipe.uk.name}`.toLowerCase()
+  const category = fallbackImageByCategory.find(({ keywords }) =>
+    keywords.some((keyword) => searchableTitle.includes(keyword)),
+  )
+  const fallbackBase = category?.url ?? 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=85'
+
+  return `${fallbackBase}&ixid=${encodeURIComponent(`recipe-${recipe.id}`)}`
+}
 
 export const ingredientCatalog = [
   'Avocado',
+  'Basil',
   'Balsamic vinegar',
   'Beef mince',
   'Bell pepper',
@@ -390,4 +733,6 @@ export const ingredientCatalog = [
   'Vegetable broth',
   'Tortillas',
   'Rice noodles',
+  'Bread',
+  'Butter',
 ]
