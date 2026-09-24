@@ -1,15 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 
-import { itemsApi } from '@/store/api/itemsApi'
-import appReducer from '@/store/slices/appSlice'
+import recipeGeneratorReducer from '@/store/slices/recipeGeneratorSlice'
 
 export const store = configureStore({
   reducer: {
-    app: appReducer,
-    [itemsApi.reducerPath]: itemsApi.reducer,
+    recipeGenerator: recipeGeneratorReducer,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(itemsApi.middleware),
 })
 
 export type RootState = ReturnType<typeof store.getState>
