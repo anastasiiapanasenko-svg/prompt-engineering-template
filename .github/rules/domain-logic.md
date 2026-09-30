@@ -1,3 +1,8 @@
+---
+description: Rules for recipe matching engine, algorithms, and localization
+globs: "frontend/src/features/recipe-generator/**/*"
+---
+
 # Recipe Domain Logic and Localization
 
 Apply this guide when changing recipe data, ingredient normalization, match calculations, result filtering/ranking, or English/Ukrainian content and language behavior.
@@ -9,7 +14,7 @@ Apply this guide when changing recipe data, ingredient normalization, match calc
 - Calculate match percentage from matching required ingredients divided by the recipe's required ingredient count; do not divide by selected ingredient count.
 - Exclude zero-match recipes (`matchPercentage <= 0`) and preserve useful partial matches.
 - Compute available and missing required ingredients for display.
-- Apply vegetarian, vegan, gluten-free, and maximum prep-time filters before returning results.
+- Apply vegetarian, vegan, gluten-free, and maximum preparation-time filters before returning results.
 - Sort by match percentage descending, then missing ingredient count ascending. A 100% match with no missing ingredients belongs at the top.
 - Do not mutate source recipes or user selections. Keep ties deterministic.
 

@@ -1,3 +1,8 @@
+---
+description: Rules for TypeScript types and React code standards
+globs: "**/*.{ts,tsx}"
+---
+
 # Code Standards, State, and Build
 
 Apply this guide when changing TypeScript, React structure, imports, Redux/session state, page transitions, or build/debug workflows.
@@ -13,7 +18,7 @@ Apply this guide when changing TypeScript, React structure, imports, Redux/sessi
 ## State and Navigation
 
 - Keep cross-page state in the existing typed Redux Toolkit slice as the single source of truth.
-- Navigate between Home/ingredient selection, Recipe List, and Recipe Details through page state; do not trigger a browser refresh or full-page navigation.
+- Navigate between Home/ingredient selection, Recipe List, and Recipe Details through page state; do not trigger browser refreshes or full-page navigation.
 - Back actions return to the prior logical view without clearing selected ingredients, filters, language, or recipe context.
 - Use existing session persistence and hydration; do not create duplicate page-local copies of shared state or a parallel navigation store.
 - Select a recipe through the established action before navigating to its detail view.

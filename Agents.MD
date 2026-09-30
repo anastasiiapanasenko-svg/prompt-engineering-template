@@ -1,6 +1,6 @@
 # Recipe Generator Agent Guide
 
-This is the canonical project-wide agent guide. Follow the relevant modular rules in `.github/rules/` for every task. Feature requirements and architecture documents under `docs/recipe-generator/` remain the source of truth for product behavior.
+This is the canonical project-wide agent guide. Rules in `.github/rules/` are path-scoped with glob patterns and activate contextually when the active file matches a rule's declared paths. Read the matching rules for the files being changed; cross-cutting work may trigger multiple rules. Feature requirements and architecture documents under `docs/recipe-generator/` remain the source of truth for product behavior.
 
 ## Project Context
 
@@ -28,7 +28,7 @@ Apply all modules relevant to the task; cross-cutting work may require multiple 
 
 ## Required Workflow
 
-1. Read the applicable rule modules and skill guides before implementation.
+1. Read applicable path-scoped rule modules and skill guides before implementation. A rule only applies when its declared glob matches the active file or task scope.
 2. Consult `docs/recipe-generator/business-requirements.md`, `architecture.md`, `test-cases.md`, and `pre-implementation-checklist.md` for product and architecture decisions.
 3. Preserve accessibility, responsive behavior, bilingual support, session state, and the espresso glass design.
 4. Keep changes focused; resolve conflicts with feature requirements before expanding scope.

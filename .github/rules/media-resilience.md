@@ -1,3 +1,8 @@
+---
+description: Rules for Unsplash images and onError fallbacks
+globs: "frontend/src/assets/**/*"
+---
+
 # Media Resilience and Assets
 
 Apply this guide when changing recipe images, image resolvers, image rendering, remote asset loading, or failure recovery.
