@@ -1,5 +1,9 @@
 # Copilot Instructions
 
+## Job-specific rules
+
+Use the root [AGENTS.md](../AGENTS.md) as the rules orchestrator. Before changing code, select and follow every applicable guide under `.github/rules/`; cross-cutting changes may require multiple guides. The feature requirements and architecture documents remain the source of truth for product behavior.
+
 ## Working mandate
 
 - Read [docs/recipe-generator/business-requirements.md](../docs/recipe-generator/business-requirements.md) before making implementation decisions.
