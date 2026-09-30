@@ -1,20 +1,35 @@
-# Project Agent Orchestrator
+# Recipe Generator Agent Guide
 
-This guide is the project-wide workflow entry point. Use [Agents.MD](./Agents.MD) as the master index of all focused rules and skills, and apply all guidance relevant to the current task.
+This is the canonical project-wide agent guide. Follow the relevant modular rules in `.github/rules/` for every task. Feature requirements and architecture documents under `docs/recipe-generator/` remain the source of truth for product behavior.
 
 ## Project Context
 
 - **Stack:** React, TypeScript, Vite, Tailwind CSS, and Redux Toolkit.
-- **Product:** Luxury Recipe Generator with local ingredient matching and dynamic English/Ukrainian support.
-- **Data boundary:** Recipe content remains in the local frontend dataset. Do not add external recipe APIs, backend persistence, or accounts without approval.
-- **Feature structure:** Recipe Generator UI resides under `frontend/src/features/recipe-generator/`; matching, localization, types, state, and data use their existing shared modules.
+- **Product:** Luxury Recipe Generator with local ingredient matching and dynamic English/Ukrainian (EN/UA) support.
+- **Data boundary:** Recipe content lives in the local frontend dataset. Do not introduce external recipe APIs, backend persistence, or accounts without approval.
+- **Feature code:** Recipe Generator UI is under `frontend/src/features/recipe-generator/`; matching, localization, types, state, and data remain in their established `frontend/src/` modules.
+
+## Rules and Skills Index
+
+Apply all modules relevant to the task; cross-cutting work may require multiple guides.
+
+### Rules
+
+- [UI design](.github/rules/ui-design.md)
+- [Code standards and navigation](.github/rules/code-standards.md)
+- [Recipe domain logic and localization](.github/rules/domain-logic.md)
+- [Media resilience](.github/rules/media-resilience.md)
+
+### Skills
+
+- [Component creation](.github/skills/component-creation/SKILL.md)
+- [Local JSON recipe matching](.github/skills/local-json-recipe-matching/SKILL.md)
+- [State management](.github/skills/state-management/SKILL.md)
 
 ## Required Workflow
 
-1. Read [Agents.MD](./Agents.MD), then select all relevant `.github/rules/` modules and `.github/skills/` guides.
-2. Before implementation decisions, read the end-to-end feature requirements, architecture, test cases, and pre-implementation checklist under `docs/recipe-generator/`.
-3. Preserve established product behavior, local data boundaries, bilingual support, session state, accessibility, and the espresso glass design.
-4. Keep changes focused and avoid unrelated refactors. Surface conflicts with requirements before expanding scope.
-5. Run `npm run build` from `frontend/` and confirm TypeScript and Vite compilation pass before completion.
-
-The business requirements and architecture documents remain the source of truth for product behavior; the rule files provide task-specific implementation constraints.
+1. Read the applicable rule modules and skill guides before implementation.
+2. Consult `docs/recipe-generator/business-requirements.md`, `architecture.md`, `test-cases.md`, and `pre-implementation-checklist.md` for product and architecture decisions.
+3. Preserve accessibility, responsive behavior, bilingual support, session state, and the espresso glass design.
+4. Keep changes focused; resolve conflicts with feature requirements before expanding scope.
+5. Run `npm run build` from `frontend/` and confirm TypeScript and Vite compilation succeed. Report any verification that could not be run.
