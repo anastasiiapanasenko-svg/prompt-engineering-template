@@ -40,6 +40,11 @@ const recipeGeneratorSlice = createSlice({
         ? state.selectedIngredients.filter((item) => item !== ingredient)
         : [...state.selectedIngredients, ingredient]
     },
+    addIngredients(state, action: PayloadAction<string[]>) {
+      const selected = new Set(state.selectedIngredients)
+      action.payload.forEach((ingredient) => selected.add(ingredient))
+      state.selectedIngredients = Array.from(selected)
+    },
     removeIngredient(state, action: PayloadAction<string>) {
       state.selectedIngredients = state.selectedIngredients.filter(
         (ingredient) => ingredient !== action.payload,
@@ -120,6 +125,7 @@ const recipeGeneratorSlice = createSlice({
 
 export const {
   toggleIngredient,
+  addIngredients,
   removeIngredient,
   setFilter,
   setCurrentPage,

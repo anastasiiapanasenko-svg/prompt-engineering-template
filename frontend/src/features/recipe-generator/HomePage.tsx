@@ -2,10 +2,22 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { recipes } from '@/data/recipes'
-import { localizedIngredient, type Language } from '@/lib/i18n'
-import { getRecipeMatches } from '@/lib/recipeMatching'
 import {
+  ingredientCatalog as datasetIngredientCatalog,
+  recipes,
+} from '@/data/recipes'
+import {
+  basicSeasoningIngredients,
+  getIngredientCategory,
+  ingredientCategories,
+  localizedIngredient,
+  seasoningIngredients,
+  type Language,
+  uiText,
+} from '@/lib/i18n'
+import { getIngredientOptions, getRecipeMatches } from '@/lib/recipeMatching'
+import {
+  addIngredients,
   clearSelection,
   removeIngredient,
   setCurrentPage,
@@ -30,15 +42,26 @@ export function HomePage() {
   const selectedIngredients = useSelector(
     (state: RootState) => state.recipeGenerator.selectedIngredients,
   )
-  const filters = useSelector((state: RootState) => state.recipeGenerator.filters)
-  const language = useSelector((state: RootState) => state.recipeGenerator.language)
+  const filters = useSelector(
+    (state: RootState) => state.recipeGenerator.filters,
+  )
+  const language = useSelector(
+    (state: RootState) => state.recipeGenerator.language,
+  )
 
   const matches = getRecipeMatches(recipes, selectedIngredients, filters)
   const submitEnabled = selectedIngredients.length > 0
+  const ingredientOptions = Array.from(
+    new Set([
+      ...getIngredientOptions(recipes),
+      ...datasetIngredientCatalog,
+      ...seasoningIngredients,
+    ]),
+  )
 
   return (
     <div className="min-h-screen bg-transparent px-4 py-8 text-[#fef3c7]">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-7xl">
         <header
           className="mb-8 rounded-[32px] border border-amber-500/20 bg-[#0d0704]/60 bg-cover bg-center p-3 text-[#fef3c7] shadow-[0_20px_60px_rgba(0,0,0,0.55)] backdrop-brightness-75"
           style={{
@@ -50,10 +73,14 @@ export function HomePage() {
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
                 <p className="mb-2 text-xs font-semibold uppercase tracking-[0.28em] text-amber-300">
-                  {language === 'uk' ? 'Генератор рецептів' : 'Recipe generator'}
+                  {language === 'uk'
+                    ? 'Генератор рецептів'
+                    : 'Recipe generator'}
                 </p>
                 <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
-                  {language === 'uk' ? 'Підбір за інгредієнтами' : 'Fridge Ingredient Match'}
+                  {language === 'uk'
+                    ? 'Підбір за інгредієнтами'
+                    : 'Fridge Ingredient Match'}
                 </h1>
               </div>
 
@@ -84,18 +111,22 @@ export function HomePage() {
           </div>
         </header>
 
-        <div className="grid gap-6 lg:grid-cols-[1.5fr_0.9fr]">
-          <Card className="border border-amber-500/20 bg-[#1e100a]/35 text-[#fef3c7] shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] backdrop-blur-xl transition-transform duration-200 hover:-translate-y-1">
+        <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_16rem]">
+          <Card className="border border-amber-500/20 bg-[#1e100a]/35 text-[#fef3c7] shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] backdrop-blur-xl">
             <CardHeader>
               <CardTitle className="text-2xl text-[#fef3c7]">
-                {language === 'uk' ? 'Виберіть інгредієнти' : 'Choose ingredients'}
+                {language === 'uk'
+                  ? 'Виберіть інгредієнти'
+                  : 'Choose ingredients'}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="mb-5 flex min-h-14 flex-wrap gap-2">
                 {selectedIngredients.length === 0 ? (
                   <p className="text-sm text-[#d6b98c]">
-                    {language === 'uk' ? 'Інгредієнти ще не вибрані.' : 'No ingredients selected yet.'}
+                    {language === 'uk'
+                      ? 'Інгредієнти ще не вибрані.'
+                      : 'No ingredients selected yet.'}
                   </p>
                 ) : (
                   selectedIngredients.map((ingredient) => (
@@ -111,83 +142,96 @@ export function HomePage() {
                 )}
               </div>
 
-              <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
-                {recipes
-                  .flatMap((recipe) => recipe.ingredients.map((ingredient) => ingredient.name))
-                  .filter((value, index, self) => self.indexOf(value) === index)
-                  .sort((left, right) => left.localeCompare(right))
-                  .map((ingredient) => {
-                    const active = selectedIngredients.includes(ingredient)
-                    return (
-                      <button
-                        key={ingredient}
-                        type="button"
-                        onClick={() => dispatch(toggleIngredient(ingredient))}
-                        className={[
-                          'rounded-xl border px-3 py-2.5 text-left text-sm font-medium transition-all duration-200 hover:-translate-y-0.5',
-                          active
-                            ? 'border-amber-400 bg-gradient-to-r from-amber-500 to-yellow-500 text-[#120a06] shadow-lg shadow-amber-900/40'
-                            : 'border border-amber-400/15 bg-amber-950/20 text-[#f3f4f6] backdrop-blur-md transition-all duration-300 hover:border-amber-300/30 hover:bg-amber-900/40',
-                        ].join(' ')}
-                      >
-                        {localizedIngredient(ingredient, language)}
-                      </button>
+              <div className="grid items-stretch gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {ingredientCategories.map((category) => {
+                  const categoryIngredients = ingredientOptions
+                    .filter(
+                      (ingredient) =>
+                        getIngredientCategory(ingredient) === category.id,
                     )
-                  })}
+                    .sort((left, right) => left.localeCompare(right))
+
+                  return (
+                    <section
+                      key={category.id}
+                      className="flex h-full flex-col rounded-2xl border border-amber-400/20 bg-amber-950/15 p-4 backdrop-blur-md"
+                      aria-labelledby={`ingredients-${category.id}`}
+                    >
+                      <div className="mb-3 flex min-h-12 flex-wrap items-start justify-between gap-3">
+                        <h3
+                          id={`ingredients-${category.id}`}
+                          className="text-lg font-semibold text-[#fef3c7]"
+                        >
+                          <span aria-hidden="true">{category.icon} </span>
+                          {language === 'uk' ? category.uk : category.en}
+                        </h3>
+                        {category.id === 'spices' ? (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() =>
+                              dispatch(
+                                addIngredients(basicSeasoningIngredients),
+                              )
+                            }
+                            className="rounded-xl border-amber-400/25 bg-amber-950/25 text-amber-100 hover:bg-amber-900/40"
+                          >
+                            {language === 'uk'
+                              ? 'Додати базові спеції'
+                              : 'Select Basic Spices'}
+                          </Button>
+                        ) : null}
+                      </div>
+                      <div className="grid gap-2 sm:grid-cols-2">
+                        {categoryIngredients.map((ingredient) => {
+                          const active =
+                            selectedIngredients.includes(ingredient)
+                          return (
+                            <button
+                              key={ingredient}
+                              type="button"
+                              onClick={() =>
+                                dispatch(toggleIngredient(ingredient))
+                              }
+                              aria-pressed={active}
+                              className={[
+                                'rounded-xl border px-3 py-2.5 text-left text-sm font-medium transition-all duration-200 hover:-translate-y-0.5',
+                                active
+                                  ? 'border-amber-400 bg-gradient-to-r from-amber-500 to-yellow-500 text-[#120a06] shadow-lg shadow-amber-900/40'
+                                  : 'border border-amber-400/15 bg-amber-950/20 text-[#f3f4f6] backdrop-blur-md transition-all duration-300 hover:border-amber-300/30 hover:bg-amber-900/40',
+                              ].join(' ')}
+                            >
+                              {localizedIngredient(ingredient, language)}
+                            </button>
+                          )
+                        })}
+                      </div>
+                      {category.id === 'spices' ? (
+                        <p className="mt-auto pt-3 text-xs text-[#d6b98c]">
+                          {language === 'uk'
+                            ? 'Сіль, чорний перець і цукор не знижують відсоток збігу, якщо їх не вибрано.'
+                            : 'Salt, black pepper, and sugar do not lower match percentages when unselected.'}
+                        </p>
+                      ) : null}
+                    </section>
+                  )
+                })}
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border border-amber-500/20 bg-[#1e100a]/35 text-[#fef3c7] shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] backdrop-blur-xl transition-transform duration-200 hover:-translate-y-1">
-            <CardHeader>
-              <CardTitle className="text-2xl text-[#fef3c7]">
-                {language === 'uk' ? 'Фільтри' : 'Filters'}
+          <Card className="border border-amber-500/20 bg-[#1e100a]/35 text-[#fef3c7] shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] backdrop-blur-xl">
+            <CardHeader className="p-4 pb-3">
+              <CardTitle className="text-lg text-[#fef3c7]">
+                {language === 'uk' ? 'Час приготування' : 'Cooking time'}
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-5">
-              <div>
-                <p className="mb-2 text-sm font-semibold text-[#f3f4f6]">
-                  {language === 'uk' ? 'Дієтичні переваги' : 'Dietary preferences'}
-                </p>
-                <div className="space-y-2">
-                  {[
-                    ['vegetarian', language === 'uk' ? 'Вегетаріанське' : 'Vegetarian'],
-                    ['vegan', language === 'uk' ? 'Веганське' : 'Vegan'],
-                    ['glutenFree', language === 'uk' ? 'Без глютену' : 'Gluten-Free'],
-                  ].map(([field, label]) => (
-                    <label
-                      key={field}
-                      className={[
-                        'flex items-center justify-between rounded-xl border p-2.5 transition',
-                        filters[field as keyof typeof filters]
-                          ? 'border-amber-500 bg-amber-400/20 text-amber-200'
-                          : 'border border-amber-400/15 bg-amber-950/20 text-[#f3f4f6] backdrop-blur-md transition-all duration-300 hover:bg-amber-900/40',
-                      ].join(' ')}
-                    >
-                      <span className="text-sm font-medium">{label}</span>
-                      <input
-                        type="checkbox"
-                        checked={Boolean(filters[field as keyof typeof filters] as boolean)}
-                        onChange={(event) =>
-                          dispatch(
-                            setFilter({
-                              field: field as keyof typeof filters,
-                              value: event.target.checked,
-                            }),
-                          )
-                        }
-                        className="h-4 w-4 accent-amber-700"
-                      />
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <p className="mb-2 text-sm font-semibold text-[#f3f4f6]">
-                  {language === 'uk' ? 'Максимальний час приготування' : 'Max prep time'}
-                </p>
-                <div className="space-y-2">
+            <CardContent className="p-4 pt-0">
+              <fieldset>
+                <legend className="mb-2 text-sm font-semibold text-[#f3f4f6]">
+                  {uiText[language].prepTime}
+                </legend>
+                <div className="grid grid-cols-2 gap-2">
                   {[
                     { label: 'Any', value: null },
                     { label: '< 15 min', value: 15 },
@@ -197,14 +241,16 @@ export function HomePage() {
                     <label
                       key={label}
                       className={[
-                        'flex items-center justify-between rounded-xl border p-2.5 transition',
+                        'flex items-center justify-between gap-2 rounded-xl border p-2.5 transition',
                         filters.maxPrepMinutes === value
                           ? 'border-amber-500 bg-amber-400/20 text-amber-200'
-                          : 'border border-amber-400/15 bg-amber-950/20 text-[#f3f4f6] backdrop-blur-md transition-all duration-300 hover:bg-amber-900/40',
+                          : 'border-amber-400/15 bg-amber-950/20 text-[#f3f4f6] hover:bg-amber-900/40',
                       ].join(' ')}
                     >
                       <span className="text-sm font-medium">
-                        {language === 'uk' ? getLocalizedPrepLabel(language, value) : label}
+                        {language === 'uk'
+                          ? getLocalizedPrepLabel(language, value)
+                          : label}
                       </span>
                       <input
                         type="radio"
@@ -223,7 +269,46 @@ export function HomePage() {
                     </label>
                   ))}
                 </div>
-              </div>
+              </fieldset>
+              <fieldset className="mt-4 rounded-xl border border-amber-400/20 bg-amber-950/15 p-3 backdrop-blur-md">
+                <legend className="px-2 text-sm font-semibold text-[#f3f4f6]">
+                  {uiText[language].dietary}
+                </legend>
+                <div className="space-y-2">
+                  {[
+                    ['vegetarian', uiText[language].vegetarian],
+                    ['vegan', uiText[language].vegan],
+                    ['glutenFree', uiText[language].glutenFree],
+                  ].map(([field, label]) => (
+                    <label
+                      key={field}
+                      className={[
+                        'flex items-center justify-between gap-2 rounded-lg border p-2 transition',
+                        filters[field as keyof typeof filters]
+                          ? 'border-amber-500 bg-amber-400/20 text-amber-200'
+                          : 'border-amber-400/15 bg-amber-950/20 text-[#f3f4f6] hover:bg-amber-900/40',
+                      ].join(' ')}
+                    >
+                      <span className="text-sm font-medium">{label}</span>
+                      <input
+                        type="checkbox"
+                        checked={Boolean(
+                          filters[field as keyof typeof filters] as boolean,
+                        )}
+                        onChange={(event) =>
+                          dispatch(
+                            setFilter({
+                              field: field as keyof typeof filters,
+                              value: event.target.checked,
+                            }),
+                          )
+                        }
+                        className="h-4 w-4 shrink-0 accent-amber-700"
+                      />
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
             </CardContent>
           </Card>
         </div>

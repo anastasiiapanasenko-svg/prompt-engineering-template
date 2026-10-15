@@ -1,6 +1,6 @@
 ---
 description: Rules for Unsplash images and onError fallbacks
-globs: "frontend/src/assets/**/*"
+globs: "frontend/src/{data,features}/**/*.{ts,tsx}"
 ---
 
 # Media Resilience and Assets
@@ -12,7 +12,7 @@ Apply this guide when changing recipe images, image resolvers, image rendering, 
 - Recipe content remains in the local dataset and uses the existing image resolver in `frontend/src/data/recipes.ts`.
 - Prefer direct Unsplash CDN food photography URLs; keep resolution deterministic and relevant to the dish.
 - Do not add external recipe APIs or generated-image services without approval.
-- Avoid duplicate displayed imagery where the resolver can distinguish repeated source URLs.
+- Keep image ownership and category-based fallback behavior in the existing dataset resolver; do not duplicate resolver logic in page components.
 - Every rendered recipe image must include meaningful alt text localized to the active language.
 
 ## Required Image Fallback

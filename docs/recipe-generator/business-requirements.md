@@ -16,7 +16,7 @@
 - Relevance-ranked recipe results
 - Partial-match results with missing ingredients clearly identified
 - Recipe details with step-by-step instructions
-- Fixed local JSON dataset containing 10-15 recipes
+- Fixed local TypeScript dataset of bilingual recipes (currently 72 records; the collection may grow through approved additions)
 - Session-only state persistence across page navigation
 - Responsive desktop and mobile experience
 - Validation, loading, empty, and error states
@@ -66,7 +66,7 @@
 
 ### 4.3 Recipe Details
 
-- Display the recipe name, placeholder image, preparation time, cooking time when available, fixed serving size, difficulty, and dietary tags.
+- Display the recipe name, image, preparation time, fixed serving size, difficulty, and dietary tags.
 - List all required ingredients and quantities.
 - Clearly distinguish available ingredients from missing ingredients.
 - Display step-by-step preparation instructions.
@@ -77,19 +77,19 @@
 
 ## 5. Data Requirements
 
-Use a fixed structured JSON dataset embedded directly in the project. It must contain 10-15 diverse recipes. Each recipe must include:
+Use the fixed typed recipe dataset embedded in `frontend/src/data/recipes.ts`. Each recipe must follow the shared `Recipe` interface and include:
 
 - Unique identifier
 - Name and description
 - Placeholder image reference
 - Ingredient names and quantities
-- Preparation time and optional cooking time
+- Preparation time
 - Fixed serving size
 - Difficulty level
 - Dietary tags
 - Step-by-step preparation instructions
 
-The predefined ingredient list must be curated alongside the recipe dataset. Ingredient values should be normalized to support reliable matching.
+The canonical ingredient selector list is maintained alongside the recipe dataset. EN/UA labels and the seven ingredient category assignments are maintained in `frontend/src/lib/i18n.ts`. Ingredient values should be normalized to support reliable matching.
 
 ## 6. Functional Requirements
 
@@ -106,14 +106,14 @@ The predefined ingredient list must be curated alongside the recipe dataset. Ing
 | BR-09 | Selected ingredients and active filters must persist across page navigation. |
 | BR-10 | The application must provide validation, loading, empty, and error feedback. |
 | BR-11 | Recipe serving sizes must remain fixed. |
-| BR-12 | Recipe content must load from the local JSON dataset without external services. |
+| BR-12 | Recipe content must load from the local TypeScript dataset without external services. |
 
 ## 7. State and Persistence
 
 - The application is session-only.
 - No authentication, accounts, or server-side persistence are required.
 - Selected ingredients and active filters must remain available across all three pages.
-- State may be held in application memory and/or `localStorage` for the active browser session.
+- State is held in Redux Toolkit and persisted in browser `sessionStorage` for the active browser session.
 - A reset or new-search action should clear or replace the current selection and filters.
 - No user profile, search history, or long-term recipe storage is required.
 
@@ -137,7 +137,7 @@ The predefined ingredient list must be curated alongside the recipe dataset. Ing
 7. Preparation-time filters exclude recipes exceeding the selected limit.
 8. Recipe serving sizes are fixed.
 9. User selections persist during the active browsing session.
-10. Recipe content comes from the embedded local JSON dataset.
+10. Recipe content comes from the embedded local TypeScript dataset.
 
 ## 10. Success Criteria
 

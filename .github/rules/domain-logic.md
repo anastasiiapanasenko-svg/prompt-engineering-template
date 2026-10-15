@@ -1,6 +1,6 @@
 ---
 description: Rules for recipe matching engine, algorithms, and localization
-globs: "frontend/src/features/recipe-generator/**/*"
+globs: "frontend/src/{data,features,lib}/**/*.{ts,tsx}"
 ---
 
 # Recipe Domain Logic and Localization
@@ -12,10 +12,11 @@ Apply this guide when changing recipe data, ingredient normalization, match calc
 - Keep recipe matching deterministic and separate from React presentation code; use the existing `frontend/src/lib/recipeMatching.ts` boundary.
 - Normalize selected and required ingredient names before comparison.
 - Calculate match percentage from matching required ingredients divided by the recipe's required ingredient count; do not divide by selected ingredient count.
+- Exclude salt, black pepper, and sugar from the scoring denominator; when unselected, do not report these baseline seasonings as missing.
 - Exclude zero-match recipes (`matchPercentage <= 0`) and preserve useful partial matches.
 - Compute available and missing required ingredients for display.
 - Apply vegetarian, vegan, gluten-free, and maximum preparation-time filters before returning results.
-- Sort by match percentage descending, then missing ingredient count ascending. A 100% match with no missing ingredients belongs at the top.
+- Sort by match percentage descending, then missing ingredient count ascending, then recipe name for deterministic ties.
 - Do not mutate source recipes or user selections. Keep ties deterministic.
 
 ## EN/UA Localization
@@ -28,4 +29,4 @@ Apply this guide when changing recipe data, ingredient normalization, match calc
 
 ## Related Skill
 
-For recipe matching, filtering, sorting, and missing-ingredient behavior, also follow [local-json-recipe-matching](../skills/local-json-recipe-matching/SKILL.md).
+For recipe matching, filtering, sorting, and missing-ingredient behavior, also follow [local-recipe-matching](../skills/local-recipe-matching/SKILL.md).

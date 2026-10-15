@@ -1,9 +1,9 @@
 ---
-description: Rules for TypeScript types and React code standards
+description: Rules for TypeScript quality, React code, state, and build checks
 globs: "**/*.{ts,tsx}"
 ---
 
-# Code Standards, State, and Build
+# TypeScript Quality, State, and Build
 
 Apply this guide when changing TypeScript, React structure, imports, Redux/session state, page transitions, or build/debug workflows.
 
@@ -11,9 +11,17 @@ Apply this guide when changing TypeScript, React structure, imports, Redux/sessi
 
 - Keep TypeScript strict. Avoid `any`; use explicit types and existing shared contracts at module boundaries.
 - Prefer small functional React components, clean imports, and the established `@/` alias.
+- Keep code compatible with the repository TypeScript and ESLint configurations; do not suppress diagnostics to bypass type or lint errors.
 - Keep shared UI reusable and feature-specific behavior localized.
 - Keep UI, domain logic, local data, localization, and side effects in their established modules.
 - Avoid unrelated refactors and preserve public contracts unless the task requires a change.
+
+## Quality toolchain
+
+- Run `npm run typecheck` for app and Vite configuration TypeScript checks.
+- Run `npm run lint` for ESLint; the script treats warnings as errors.
+- Run `npm run build` to run the TypeScript project build and Vite production build.
+- Use `npm run format` for source formatting when needed, then inspect the diff for unintended changes.
 
 ## State and Navigation
 

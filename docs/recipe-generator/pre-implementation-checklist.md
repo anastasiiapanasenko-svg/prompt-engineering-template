@@ -11,7 +11,7 @@ Complete this checklist before writing code for the recipe generator.
 ## 2. Confirm scope boundaries
 
 - Confirm the feature remains a single end-to-end app slice.
-- Confirm the app uses a fixed local JSON dataset instead of external APIs.
+- Confirm the app uses the fixed TypeScript dataset in `frontend/src/data/recipes.ts` instead of external APIs.
 - Confirm the three pages remain: Home / Ingredient Selection, Recipe List, and Recipe Details.
 - Confirm state remains session-based and no account or database persistence is introduced.
 

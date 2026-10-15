@@ -2,7 +2,7 @@
 
 ## Job-specific rules
 
-Use the root [AGENTS.md](../AGENTS.md) as the rules orchestrator. Before changing code, select and follow every applicable guide under `.github/rules/`; cross-cutting changes may require multiple guides. The feature requirements and architecture documents remain the source of truth for product behavior.
+Use the root [Agents.MD](../Agents.MD) as the rules orchestrator. Before changing code, select and follow every applicable guide under `.github/rules/`; cross-cutting changes may require multiple guides. The feature requirements and architecture documents remain the source of truth for product behavior.
 
 ## Working mandate
 
@@ -16,18 +16,24 @@ Use the root [AGENTS.md](../AGENTS.md) as the rules orchestrator. Before changin
 - Prefer functional components and TypeScript interfaces or types.
 - Avoid `any` unless there is a documented and temporary exception.
 - Keep shared UI pieces reusable and feature-specific logic localized.
-- Use Redux Toolkit slices or local feature state for cross-page state, not ad hoc component state for shared selections.
+- Keep cross-page state in the Redux Toolkit slice. The app persists selection, filters, page, selected recipe, and language through browser `sessionStorage`.
 - Put recipe matching and filtering logic in a dedicated utility or service module, not inside components.
 - Keep side effects and data access separated from UI rendering.
-- Use normalized, display-safe ingredient keys and avoid mutation of arrays or objects during filtering.
+- Use normalized canonical ingredient values for matching and localized labels for display; avoid mutating arrays or objects during filtering.
 
 ## Architecture boundaries
 
 - Frontend pages belong under the feature-specific structure in `frontend/src/features/`.
-- Data lives in a local fixed dataset, not in a backend database or external API.
+- Recipe records and the selectable ingredient catalog live in `frontend/src/data/recipes.ts`; localization and ingredient category metadata live in `frontend/src/lib/i18n.ts`.
+- Ingredient panels are Meat, Grains, Vegetables, Dairy, Bakery, Spices, and Pantry. Every selectable ingredient must have EN/UA labels and exactly one category.
+- Data lives in the fixed local dataset, not in a backend database or external API.
 - Recipe matching logic must handle partial matches and highlight missing ingredients.
 - UI should remain focused on state representation, not business rule implementation.
 - Keep service/data logic deterministic and easy to test.
+
+## Toolchain
+
+From `frontend/`, use `npm run dev` to start Vite, `npm run typecheck` for TypeScript validation, `npm run lint` for ESLint, `npm run format` for Prettier formatting, and `npm run build` for the TypeScript/Vite production build.
 
 ## Required workflow
 

@@ -1,4 +1,5 @@
 import type { Recipe, RecipeFilters, RecipeMatch } from '@/types/recipe'
+import { basicSeasoningIngredients } from '@/lib/i18n'
 
 export const normalizeIngredient = (ingredient: string) =>
   ingredient
@@ -8,6 +9,8 @@ export const normalizeIngredient = (ingredient: string) =>
     .replace(/[^a-z0-9\s]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()
+
+const basicSeasoningSet = new Set(basicSeasoningIngredients.map(normalizeIngredient))
 
 export const getIngredientOptions = (recipes: Recipe[]) => {
   const names = new Set<string>()
@@ -51,19 +54,28 @@ export const getRecipeMatches = (
 
   const matches = filteredRecipes
     .map((recipe) => {
+      const scoredIngredients = recipe.ingredients.filter(
+        (ingredient) => !basicSeasoningSet.has(normalizeIngredient(ingredient.name)),
+      )
       const availableIngredients = recipe.ingredients.filter((ingredient) =>
         selectedSet.has(normalizeIngredient(ingredient.name)),
       )
 
-      const missingIngredients = recipe.ingredients.filter(
-        (ingredient) => !selectedSet.has(normalizeIngredient(ingredient.name)),
-      )
+      const missingIngredients = recipe.ingredients.filter((ingredient) => {
+        const normalizedName = normalizeIngredient(ingredient.name)
+        return (
+          !selectedSet.has(normalizedName) &&
+          !basicSeasoningSet.has(normalizedName)
+        )
+      })
 
-      const matchCount = availableIngredients.length
+      const matchCount = scoredIngredients.filter((ingredient) =>
+        selectedSet.has(normalizeIngredient(ingredient.name)),
+      ).length
       const matchPercentage =
-          recipe.ingredients.length === 0
+        scoredIngredients.length === 0
           ? 0
-            : Math.round((matchCount / recipe.ingredients.length) * 100)
+          : Math.round((matchCount / scoredIngredients.length) * 100)
 
       return {
         recipe,
@@ -75,7 +87,12 @@ export const getRecipeMatches = (
     })
     .filter((match) => match.matchPercentage > 0)
 
-  matches.sort((a, b) => b.matchPercentage - a.matchPercentage)
+  matches.sort(
+    (a, b) =>
+      b.matchPercentage - a.matchPercentage ||
+      a.missingIngredients.length - b.missingIngredients.length ||
+      a.recipe.name.localeCompare(b.recipe.name),
+  )
 
   return matches
 }

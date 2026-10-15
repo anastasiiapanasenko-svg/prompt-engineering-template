@@ -1,4 +1,12 @@
 export type DietaryTag = 'vegetarian' | 'vegan' | 'gluten-free'
+export type IngredientCategory =
+  | 'meat'
+  | 'grains'
+  | 'vegetables'
+  | 'dairy'
+  | 'bakery'
+  | 'spices'
+  | 'pantry'
 
 export interface RecipeIngredient {
   name: string

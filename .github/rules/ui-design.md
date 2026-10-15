@@ -1,6 +1,6 @@
 ---
 description: Rules for UI components and glassmorphic design
-globs: "frontend/src/components/**/*"
+globs: "frontend/src/{components,features}/**/*.tsx"
 ---
 
 # UI Design and Components

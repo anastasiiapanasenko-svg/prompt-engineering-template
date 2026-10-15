@@ -42,7 +42,7 @@
 | ID | Steps | Expected |
 |----|-------|----------|
 | TC-S-01 | Select ingredients and filters, then navigate across all pages | Selection and filters remain unchanged. |
-| TC-S-02 | Refresh during an active search | Session state is restored when `localStorage` persistence is enabled. |
+| TC-S-02 | Refresh during an active search in the same browser session | Selection, filters, current page, selected recipe, and language are restored from `sessionStorage`. |
 | TC-S-03 | Use Reset or New Search | Previous ingredients and filters are cleared or replaced. |
 | TC-S-04 | Close and reopen a new browser session | No account or long-term user profile data is required. |
 
@@ -50,9 +50,10 @@
 
 | ID | Steps | Expected |
 |----|-------|----------|
-| TC-DATA-01 | Inspect the local dataset | It contains 10-15 recipes with required metadata and detailed steps. |
+| TC-DATA-01 | Inspect the local dataset | The current TypeScript dataset contains 72 recipes; every record follows the shared schema and includes complete EN/UA content and detailed steps. |
 | TC-DATA-02 | Load the app without network access | Recipe data remains available from the local dataset. |
-| TC-DATA-03 | Simulate dataset initialization failure | A clear recoverable error state is shown. |
+| TC-DATA-03 | Simulate a remote recipe image failure | The configured fallback image is shown without a broken-image icon. |
+| TC-DATA-04 | Inspect every selectable ingredient across all seven category panels | Each option has one category and bilingual labels; no option is missing or duplicated. |
 
 ## Accessibility and Responsive Behavior
 
