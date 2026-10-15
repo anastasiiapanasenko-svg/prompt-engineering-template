@@ -22,8 +22,10 @@ export const ingredientCatalog = [
   { key: 'cucumber', en: 'Cucumber', uk: 'Огірок' },
   { key: 'cumin', en: 'Cumin', uk: 'Кмин' },
   { key: 'curry-powder', en: 'Curry powder', uk: 'Порошок каррі' },
+  { key: 'eggplant', en: 'Eggplant', uk: 'Баклажан' },
   { key: 'eggs', en: 'Eggs', uk: 'Яйця' },
   { key: 'feta', en: 'Feta', uk: 'Фета' },
+  { key: 'flour', en: 'Flour', uk: 'Борошно' },
   { key: 'garlic', en: 'Garlic', uk: 'Часник' },
   { key: 'ginger', en: 'Ginger', uk: 'Імбир' },
   { key: 'granola', en: 'Granola', uk: 'Гранола' },
@@ -47,6 +49,7 @@ export const ingredientCatalog = [
   { key: 'rice', en: 'Rice', uk: 'Рис' },
   { key: 'rice-noodles', en: 'Rice noodles', uk: 'Рисова локшина' },
   { key: 'salmon-fillet', en: 'Salmon fillet', uk: 'Філе лосося' },
+  { key: 'sour-cream', en: 'Sour cream', uk: 'Сметана' },
   { key: 'soy-sauce', en: 'Soy sauce', uk: 'Соєвий соус' },
   { key: 'spinach', en: 'Spinach', uk: 'Шпинат' },
   { key: 'sweetcorn', en: 'Sweetcorn', uk: 'Кукурудза' },
@@ -55,6 +58,7 @@ export const ingredientCatalog = [
   { key: 'turkey-slices', en: 'Turkey slices', uk: 'Шматочки індички' },
   { key: 'vegetable-broth', en: 'Vegetable broth', uk: 'Овочевий бульйон' },
   { key: 'tortillas', en: 'Tortillas', uk: 'Лаваш' },
+  { key: 'zucchini', en: 'Zucchini', uk: 'Кабачок' },
   { key: 'basil', en: 'Basil', uk: 'Базилік' },
 ]
 
