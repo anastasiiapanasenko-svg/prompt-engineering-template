@@ -23,6 +23,14 @@ Use this skill for:
 - Persist only session-relevant state, not long-term user data.
 - Do not duplicate state between page components and global store.
 
+## Workflow
+
+1. Trace the existing Redux slice, selectors, persistence, and page transitions before editing state behavior.
+2. Define the smallest typed state or action change that supports the requirement, preserving the established source of truth.
+3. Update reducers and selectors immutably; keep transient presentation state local when it is not shared across pages.
+4. Confirm selection, filters, language, and current recipe context remain coherent through navigation and session hydration.
+5. Verify reset behavior, persistence boundaries, and the relevant UI flow with the project's typecheck and build checks.
+
 ## Preferred patterns
 
 - Use `createSlice` for feature state when Redux is the chosen store.

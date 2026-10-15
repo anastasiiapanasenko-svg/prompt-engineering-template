@@ -1,6 +1,6 @@
 # Recipe Generator Agent Guide
 
-This is the canonical project-wide agent guide. Rules in `.github/rules/` are path-scoped with glob patterns and activate contextually when the active file matches a rule's declared paths. Read the matching rules for the files being changed; cross-cutting work may trigger multiple rules. Feature requirements and architecture documents under `docs/recipe-generator/` remain the source of truth for product behavior.
+This is the canonical project-wide agent guide. Rules in `.github/rules/` are path-scoped with glob patterns and activate contextually when the active file matches a rule's declared paths. Read the matching rules for the files being changed; cross-cutting work may require multiple guides. Feature requirements and architecture documents under `docs/recipe-generator/` remain the source of truth for product behavior.
 
 ## Project Context
 
@@ -32,4 +32,6 @@ Apply all modules relevant to the task; cross-cutting work may require multiple 
 2. Consult `docs/recipe-generator/business-requirements.md`, `architecture.md`, `test-cases.md`, and `pre-implementation-checklist.md` for product and architecture decisions.
 3. Preserve accessibility, responsive behavior, bilingual support, session state, and the espresso glass design.
 4. Keep changes focused; resolve conflicts with feature requirements before expanding scope.
-5. Run `npm run build` from `frontend/` and confirm TypeScript and Vite compilation succeed. Report any verification that could not be run.
+5. Run commands from `frontend/`. Use `npm run typecheck`, `npm run lint`, and `npm run build` for verification; run `npm run format` when formatting source changes. Report any verification that could not be run.
+
+See [`CLAUDE.md`](./CLAUDE.md) for the project passport, standard commands, and MCP integration notes.

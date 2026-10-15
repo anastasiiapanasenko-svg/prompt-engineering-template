@@ -23,6 +23,15 @@ Use this skill for:
 - Keep matching logic deterministic and easy to unit test.
 - Sort results by relevance using the highest match percentage first.
 
+## Workflow
+
+1. Inspect the recipe and ingredient types, local dataset, and existing matching helper before changing behavior.
+2. Normalize selected and required ingredient values using the shared normalization approach.
+3. Compute each recipe's matched ingredients, missing ingredients, and percentage against its required ingredient count without mutating inputs.
+4. Apply dietary and preparation-time constraints, retaining useful partial matches and excluding recipes with no selected-ingredient match.
+5. Sort deterministically by match percentage and the established stable tie-breaker.
+6. Add or update tests for full matches, partial matches, no matches, filters, and tie ordering; validate the result through the feature UI.
+
 ## Preferred implementation approach
 
 - Load recipe records once from the local JSON data source.

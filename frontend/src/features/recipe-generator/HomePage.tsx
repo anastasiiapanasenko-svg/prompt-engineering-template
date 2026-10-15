@@ -159,7 +159,7 @@ export function HomePage() {
                       key={field}
                       className={[
                         'flex items-center justify-between rounded-xl border p-2.5 transition',
-                        Boolean(filters[field as keyof typeof filters])
+                        filters[field as keyof typeof filters]
                           ? 'border-amber-500 bg-amber-400/20 text-amber-200'
                           : 'border border-amber-400/15 bg-amber-950/20 text-[#f3f4f6] backdrop-blur-md transition-all duration-300 hover:bg-amber-900/40',
                       ].join(' ')}

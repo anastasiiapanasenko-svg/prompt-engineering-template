@@ -23,6 +23,14 @@ Use this skill for:
 - Separate view logic from business rules and data transformation.
 - Use existing UI primitives where possible and keep styling consistent with the project.
 
+## Workflow
+
+1. Identify the screen or state the component represents and inspect nearby components and shared UI primitives.
+2. Define a narrow responsibility, typed props, and the callbacks or state it needs; keep domain decisions in existing selectors or utilities.
+3. Implement with semantic HTML and the established visual and localization patterns.
+4. Verify keyboard interaction, accessible names and states, visible focus, and responsive behavior.
+5. Run the relevant project checks and review the rendered component in its normal feature flow.
+
 ## Good patterns
 
 - Presentational components receive data and callbacks as props.
