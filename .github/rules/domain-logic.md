@@ -1,6 +1,6 @@
 ---
 description: Rules for recipe matching engine, algorithms, and localization
-globs: "frontend/src/{data,features,lib}/**/*.{ts,tsx}"
+globs: "recipe-app-frontend/src/{data,features,lib}/**/*.{ts,tsx}"
 ---
 
 # Recipe Domain Logic and Localization
@@ -9,7 +9,7 @@ Apply this guide when changing recipe data, ingredient normalization, match calc
 
 ## Recipe Matching and Filtering
 
-- Keep recipe matching deterministic and separate from React presentation code; use the existing `frontend/src/lib/recipeMatching.ts` boundary.
+- Keep recipe matching deterministic and separate from React presentation code; use the existing `recipe-app-frontend/src/lib/recipeMatching.ts` boundary.
 - Normalize selected and required ingredient names before comparison.
 - Calculate match percentage from matching required ingredients divided by the recipe's required ingredient count; do not divide by selected ingredient count.
 - Exclude salt, black pepper, and sugar from the scoring denominator; when unselected, do not report these baseline seasonings as missing.

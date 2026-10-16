@@ -34,7 +34,7 @@ Use this skill for:
 
 ## Preferred implementation approach
 
-- Read recipe records from `frontend/src/data/recipes.ts`; do not introduce runtime API or database access.
+- Read recipe records from `recipe-app-frontend/src/data/recipes.ts`; do not introduce runtime API or database access.
 - Filter by dietary tags and preparation-time constraints.
 - For each recipe, compute:
   - total scored ingredients, excluding baseline seasonings

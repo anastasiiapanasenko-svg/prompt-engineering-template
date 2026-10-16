@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String          @id @default(uuid())
+  email          String          @unique
+  /// Bcrypt password hash; plaintext passwords must never be stored.
+  password       String
+  name           String?
+  createdAt      DateTime        @default(now())
+  history        History[]
+  customProducts CustomProduct[]
+  mealPlans      MealPlan[]
+  sessions       AuthSession[]
+}
+
+model History {
+  id                  String   @id @default(uuid())
+  userId              String
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  selectedIngredients String
+  matchedRecipesCount Int
+  createdAt           DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model CustomProduct {
+  id             String   @id @default(uuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name           String
+  normalizedName String?
+  category       String
+  createdAt      DateTime @default(now())
+
+  @@unique([userId, normalizedName])
+  @@index([userId, createdAt])
+}
+
+model MealPlan {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipeId    String
+  recipeTitle String
+  date        String
+  mealType    String
+  createdAt   DateTime @default(now())
+
+  @@index([userId, date, mealType])
+}
+
+model AuthSession {
+  tokenHash String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId, expiresAt])
+  @@index([expiresAt])
+}

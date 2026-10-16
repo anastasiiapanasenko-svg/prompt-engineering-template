@@ -33,7 +33,7 @@ Apply this guide when changing TypeScript, React structure, imports, Redux/sessi
 
 ## Build and Debugging
 
-- From `frontend/`, run `npm run build`. This runs `tsc -b` and then the Vite production build; both must succeed.
+- From `recipe-app-frontend/`, run `npm run build`. This runs `tsc -b` and then the Vite production build; both must succeed.
 - Fix the smallest relevant issue and rerun the same build after a failure.
 - Do not claim verification unless the command ran successfully; disclose unavailable checks.
 

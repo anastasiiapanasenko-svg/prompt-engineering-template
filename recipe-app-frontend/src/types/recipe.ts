@@ -3,6 +3,7 @@ export type IngredientCategory =
   | 'meat'
   | 'grains'
   | 'vegetables'
+  | 'fruits'
   | 'dairy'
   | 'bakery'
   | 'spices'

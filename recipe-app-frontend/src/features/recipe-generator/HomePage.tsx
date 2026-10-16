@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { Button } from '@/components/ui/button'
@@ -6,6 +7,13 @@ import {
   ingredientCatalog as datasetIngredientCatalog,
   recipes,
 } from '@/data/recipes'
+import { AccountPanel } from '@/features/recipe-generator/AccountPanel'
+import {
+  apiRequest,
+  localizedApiErrorMessage,
+  type AuthUser,
+  type CustomProduct,
+} from '@/lib/api'
 import {
   basicSeasoningIngredients,
   getIngredientCategory,
@@ -39,6 +47,12 @@ const getLocalizedPrepLabel = (language: Language, value: number | null) => {
 
 export function HomePage() {
   const dispatch = useDispatch()
+  const [user, setUser] = useState<AuthUser | null>(null)
+  const [customProducts, setCustomProducts] = useState<CustomProduct[]>([])
+  const [historyRefreshKey, setHistoryRefreshKey] = useState(0)
+  const [historyError, setHistoryError] = useState<string | null>(null)
+  const [isSavingSearch, setIsSavingSearch] = useState(false)
+  const previousCustomProducts = useRef<string[] | null>(null)
   const selectedIngredients = useSelector(
     (state: RootState) => state.recipeGenerator.selectedIngredients,
   )
@@ -56,21 +70,72 @@ export function HomePage() {
       ...getIngredientOptions(recipes),
       ...datasetIngredientCatalog,
       ...seasoningIngredients,
+      ...customProducts.map((product) => product.name),
     ]),
   )
+  const customProductCategories = new Map(
+    customProducts.map((product) => [product.name, product.category]),
+  )
+
+  const handleUserChange = useCallback((nextUser: AuthUser | null) => {
+    setUser(nextUser)
+    if (!nextUser) setHistoryError(null)
+  }, [])
+
+  const handleCustomProductsChange = useCallback(
+    (nextProducts: CustomProduct[]) => setCustomProducts(nextProducts),
+    [],
+  )
+
+  useEffect(() => {
+    const previousNames = previousCustomProducts.current
+    if (previousNames) {
+      const nextNames = new Set(customProducts.map((product) => product.name))
+      previousNames
+        .filter((name) => !nextNames.has(name))
+        .forEach((name) => dispatch(removeIngredient(name)))
+    }
+    previousCustomProducts.current = customProducts.map(
+      (product) => product.name,
+    )
+  }, [customProducts, dispatch])
+
+  const handleGenerateRecipes = async () => {
+    if (!submitEnabled || isSavingSearch) return
+    setHistoryError(null)
+    if (user) {
+      setIsSavingSearch(true)
+      try {
+        await apiRequest('/history', {
+          method: 'POST',
+          body: JSON.stringify({
+            selectedIngredients,
+            matchedRecipesCount: matches.length,
+          }),
+        })
+        setHistoryRefreshKey((current) => current + 1)
+      } catch (saveError) {
+        setHistoryError(localizedApiErrorMessage(saveError, language))
+        return
+      } finally {
+        setIsSavingSearch(false)
+      }
+    }
+    dispatch(setCurrentPage('list'))
+  }
 
   return (
     <div className="min-h-screen bg-transparent px-4 py-8 text-[#fef3c7]">
       <div className="mx-auto max-w-7xl">
         <header
-          className="mb-8 rounded-[32px] border border-amber-500/20 bg-[#0d0704]/60 bg-cover bg-center p-3 text-[#fef3c7] shadow-[0_20px_60px_rgba(0,0,0,0.55)] backdrop-brightness-75"
+          className="relative z-40 mb-8 rounded-[32px] border border-amber-500/20 bg-[#0d0704]/60 bg-cover bg-center p-3 text-[#fef3c7] shadow-[0_20px_60px_rgba(0,0,0,0.55)] backdrop-brightness-75"
           style={{
             backgroundImage:
               "linear-gradient(90deg, rgba(13, 7, 4, 0.88), rgba(58, 29, 14, 0.62)), url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1920&q=80')",
           }}
         >
           <div className="rounded-3xl border border-amber-500/20 bg-[#120a06]/50 p-8 text-[#fef3c7] shadow-2xl backdrop-blur-2xl">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="relative flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
                 <p className="mb-2 text-xs font-semibold uppercase tracking-[0.28em] text-amber-300">
                   {language === 'uk'
@@ -84,22 +149,32 @@ export function HomePage() {
                 </h1>
               </div>
 
-              <div className="flex items-center gap-2 rounded-full border border-amber-300/30 bg-amber-100/10 p-1 backdrop-blur-sm">
-                {(['en', 'uk'] as const).map((option) => (
-                  <button
-                    key={option}
-                    type="button"
-                    onClick={() => dispatch(setLanguage(option))}
-                    className={[
-                      'rounded-full px-3 py-1.5 text-sm font-medium transition',
-                      language === option
-                        ? 'bg-amber-400 text-[#120a06] shadow-md'
-                        : 'text-amber-100/80 hover:bg-amber-100/10',
-                    ].join(' ')}
-                  >
-                    {option === 'uk' ? '🇺🇦 UA' : '🇬🇧 EN'}
-                  </button>
-                ))}
+              <div className="flex items-center justify-between gap-3 md:justify-end">
+                <div className="flex items-center gap-2 rounded-full border border-amber-300/30 bg-amber-100/10 p-1 backdrop-blur-sm">
+                  {(['en', 'uk'] as const).map((option) => (
+                    <button
+                      key={option}
+                      type="button"
+                      aria-pressed={language === option}
+                      onClick={() => dispatch(setLanguage(option))}
+                      className={[
+                        'rounded-full px-3 py-1.5 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300',
+                        language === option
+                          ? 'bg-amber-400 text-[#120a06] shadow-md'
+                          : 'text-amber-100/80 hover:bg-amber-100/10',
+                      ].join(' ')}
+                    >
+                      {option === 'uk' ? '🇺🇦 UA' : '🇬🇧 EN'}
+                    </button>
+                  ))}
+                </div>
+                <AccountPanel
+                  language={language}
+                  onUserChange={handleUserChange}
+                  onCustomProductsChange={handleCustomProductsChange}
+                  historyRefreshKey={historyRefreshKey}
+                  historyError={historyError}
+                />
               </div>
             </div>
 
@@ -147,7 +222,8 @@ export function HomePage() {
                   const categoryIngredients = ingredientOptions
                     .filter(
                       (ingredient) =>
-                        getIngredientCategory(ingredient) === category.id,
+                        (customProductCategories.get(ingredient) ??
+                          getIngredientCategory(ingredient)) === category.id,
                     )
                     .sort((left, right) => left.localeCompare(right))
 
@@ -315,11 +391,17 @@ export function HomePage() {
 
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <Button
-            onClick={() => dispatch(setCurrentPage('list'))}
-            disabled={!submitEnabled}
+            onClick={() => void handleGenerateRecipes()}
+            disabled={!submitEnabled || isSavingSearch}
             className="h-11 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 px-5 font-semibold text-[#120a06] shadow-lg shadow-amber-900/50 transition hover:from-amber-400 hover:to-yellow-400 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {language === 'uk' ? 'Згенерувати рецепти' : 'Generate recipes'}
+            {language === 'uk'
+              ? isSavingSearch
+                ? 'Збереження пошуку…'
+                : 'Згенерувати рецепти'
+              : isSavingSearch
+                ? 'Saving search…'
+                : 'Generate recipes'}
           </Button>
           <Button
             variant="outline"

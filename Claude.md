@@ -2,29 +2,30 @@
 
 ## Project and architecture
 
-Luxury Recipe Generator is a client-side React application that matches locally stored recipes to selected ingredients and displays bilingual (English/Ukrainian) recipe content.
+Luxury Recipe Generator is a React application that matches local recipes to selected ingredients and optionally persists accounts, personal products, and search history.
 
-- **Stack:** React, Vite, TypeScript, Tailwind CSS, Redux Toolkit, and a local `i18n.ts` localization catalog/helper.
-- **Pages:** Home / ingredient selection, Recipe List, and Recipe Details under `frontend/src/features/recipe-generator/`.
-- **Recipe data:** Typed local records in `frontend/src/data/recipes.ts`; no runtime recipe API or backend database.
-- **Matching:** Deterministic matching and filters in `frontend/src/lib/recipeMatching.ts`.
-- **Localization and categories:** Bilingual ingredient labels, category headings, and UI text in `frontend/src/lib/i18n.ts`.
-- **Shared state:** Redux Toolkit store and recipe-generator slice under `frontend/src/store/`. The app persists selection, filters, page, selected recipe, and language in browser `sessionStorage`.
+- **Stack:** React, Vite, TypeScript, Tailwind CSS, Redux Toolkit, Express, Prisma, and SQLite.
+- **Pages:** Home / ingredient selection, Recipe List, and Recipe Details under `recipe-app-frontend/src/features/recipe-generator/`.
+- **Recipe data:** Typed local records in `recipe-app-frontend/src/data/recipes.ts`; recipe matching stays local. SQLite stores only account-related data.
+- **Matching:** Deterministic matching and filters in `recipe-app-frontend/src/lib/recipeMatching.ts`.
+- **Localization and categories:** Bilingual ingredient labels, category headings, and UI text in `recipe-app-frontend/src/lib/i18n.ts`.
+- **Shared state:** Redux Toolkit store and recipe-generator slice under `recipe-app-frontend/src/store/`. The app persists selection, filters, page, selected recipe, and language in browser `sessionStorage`.
 - **Ingredient panels:** Meat & Poultry, Grains & Cereals, Vegetables & Greens, Dairy & Cheese, Bakery & Bread, Spices & Seasonings, and Pantry & Oils.
+- **API:** Express routes and Prisma models are under `recipe-app-backend/`; see [`recipe-app-backend/README.md`](./recipe-app-backend/README.md) for setup.
 
-Keep the app local-first: do not introduce external recipe services, accounts, or server persistence without approval.
+Keep recipe discovery local-first. Do not introduce external recipe services; use the API only for the approved account, custom-product, and search-history features.
 
 ## Development commands
 
-Run these commands from [`frontend/`](./frontend/):
+Run these commands from [`recipe-app-frontend/`](./recipe-app-frontend/):
 
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` | Start the Vite development server. |
-| `npm run build` | Run the TypeScript project build and create the Vite production bundle. |
-| `npm run lint` | Run ESLint with warnings treated as errors. |
+| Command             | Purpose                                                                         |
+| ------------------- | ------------------------------------------------------------------------------- |
+| `npm run dev`       | Start the Vite development server.                                              |
+| `npm run build`     | Run the TypeScript project build and create the Vite production bundle.         |
+| `npm run lint`      | Run ESLint with warnings treated as errors.                                     |
 | `npm run typecheck` | Run TypeScript checks for app and tooling configuration without emitting files. |
-| `npm run format` | Format source TypeScript, TSX, CSS, and Markdown with Prettier. |
+| `npm run format`    | Format source TypeScript, TSX, CSS, and Markdown with Prettier.                 |
 
 ## Quality assurance
 
@@ -33,11 +34,11 @@ Run these commands from [`frontend/`](./frontend/):
 - **Formatter:** Prettier (`npm run format`).
 - **Production build:** Vite (`npm run build`).
 
-Before finishing code changes, run typecheck, lint, and build; run the formatter when source formatting is needed and review its diff. The repository does not currently define an automated test script.
+Before finishing frontend code changes, run typecheck, lint, and build; run the formatter when source formatting is needed and review its diff. Run the backend integration tests with `npm test` from `recipe-app-backend/`.
 
 ## Project guidance
 
-- [Agents.MD](./Agents.MD) is the canonical project-wide instruction index and workflow.
+- [AGENTS.md](./AGENTS.md) is the canonical project-wide instruction index and workflow.
 - Browse all [path-scoped rules](./.github/rules/) and [workflow skills](./.github/skills/).
 - Product behavior, architecture, validation cases, and the pre-implementation checklist live in [`docs/recipe-generator/`](./docs/recipe-generator/).
 - Read [MCP integration guidance](./docs/mcp-integration.md) before adding or configuring Model Context Protocol services.

@@ -4,9 +4,9 @@
     {
       "label": "Install backend dependencies",
       "type": "shell",
-      "command": "uv sync",
+      "command": "npm install",
       "options": {
-        "cwd": "${workspaceFolder}/backend"
+        "cwd": "${workspaceFolder}/recipe-app-backend"
       },
       "problemMatcher": []
     },
@@ -15,7 +15,7 @@
       "type": "shell",
       "command": "npm install",
       "options": {
-        "cwd": "${workspaceFolder}/frontend"
+        "cwd": "${workspaceFolder}/recipe-app-frontend"
       },
       "problemMatcher": []
     },
@@ -24,7 +24,7 @@
       "type": "shell",
       "command": "npm run dev",
       "options": {
-        "cwd": "${workspaceFolder}/frontend"
+        "cwd": "${workspaceFolder}/recipe-app-frontend"
       },
       "isBackground": true,
       "problemMatcher": {
@@ -36,6 +36,26 @@
           "activeOnStart": true,
           "beginsPattern": ".",
           "endsPattern": "Local:"
+        }
+      }
+    },
+    {
+      "label": "Run backend",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": {
+        "cwd": "${workspaceFolder}/recipe-app-backend"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "recipe-api",
+        "pattern": {
+          "regexp": "^$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".",
+          "endsPattern": "Recipe Generator API listening on port 8001"
         }
       }
     }

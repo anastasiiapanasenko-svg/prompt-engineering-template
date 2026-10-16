@@ -1,6 +1,6 @@
 ---
 description: Rules for UI components and glassmorphic design
-globs: "frontend/src/{components,features}/**/*.tsx"
+globs: "recipe-app-frontend/src/{components,features}/**/*.tsx"
 ---
 
 # UI Design and Components
@@ -18,7 +18,7 @@ Apply these rules when building or changing React components, cards, dialogs, bu
 ## Component Quality and Accessibility
 
 - Prefer focused functional components with explicit TypeScript props and responsibilities.
-- Reuse shared UI primitives in `frontend/src/components/ui/` and follow nearby feature patterns.
+- Reuse shared UI primitives in `recipe-app-frontend/src/components/ui/` and follow nearby feature patterns.
 - Keep business rules out of components; render state supplied by selectors and domain helpers.
 - Keep controls semantic, keyboard accessible, and equipped with visible focus states and meaningful accessible names.
 - Ensure responsive layouts do not overlap or clip text and controls.

@@ -19,7 +19,7 @@ description: Use this skill when verifying changes to the recipe generator front
 
 ## Workflow
 
-1. Run commands from `frontend/`; inspect `package.json` if scripts change.
+1. Run commands from `recipe-app-frontend/`; inspect `package.json` if scripts change.
 2. For source changes, run `npm run typecheck`, `npm run lint`, and `npm run build`.
 3. Use `npm run format` when formatting source files is needed, then inspect its diff and rerun relevant checks.
 4. Check `git diff --check` and review changed files for accidental edits.

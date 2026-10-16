@@ -136,6 +136,12 @@ export const ingredientCategories: {
     en: 'Vegetables & Greens',
     uk: 'Овочі та зелень',
   },
+  {
+    id: 'fruits',
+    icon: '🍓',
+    en: 'Fruits & Berries',
+    uk: 'Фрукти та ягоди',
+  },
   { id: 'dairy', icon: '🧀', en: 'Dairy & Cheese', uk: 'Молочні продукти' },
   { id: 'bakery', icon: '🍞', en: 'Bakery & Bread', uk: 'Хлібобулочні вироби' },
   {
@@ -168,6 +174,8 @@ export const ingredientCategoryByName: Record<string, IngredientCategory> = {
   Rice: 'grains',
   'Rice noodles': 'grains',
   Avocado: 'vegetables',
+  Apple: 'fruits',
+  Apricot: 'fruits',
   'Bell pepper': 'vegetables',
   Broccoli: 'vegetables',
   Carrot: 'vegetables',
@@ -177,10 +185,10 @@ export const ingredientCategoryByName: Record<string, IngredientCategory> = {
   Garlic: 'vegetables',
   Ginger: 'vegetables',
   Lettuce: 'vegetables',
-  Lemon: 'vegetables',
-  Lime: 'vegetables',
-  Mango: 'vegetables',
-  'Mixed berries': 'vegetables',
+  Lemon: 'fruits',
+  Lime: 'fruits',
+  Mango: 'fruits',
+  'Mixed berries': 'fruits',
   Mushrooms: 'vegetables',
   Onion: 'vegetables',
   'Red onion': 'vegetables',
@@ -263,8 +271,8 @@ export const getIngredientCategory = (
 
 export const ingredientKeyMap = new Map(
   ingredientCatalog.flatMap((item) => [
-    [item.en.toLowerCase(), item.key],
-    [item.uk.toLowerCase(), item.key],
+    [item.en.toLowerCase().normalize('NFC'), item.key],
+    [item.uk.toLowerCase().normalize('NFC'), item.key],
   ]),
 )
 
@@ -274,12 +282,16 @@ export const ingredientLabel = (key: string, language: Language) => {
 }
 
 export const normalizeIngredientKey = (value: string) => {
-  const normalized = value.toLowerCase().trim()
+  const normalized = value.toLowerCase().trim().normalize('NFC')
   return ingredientKeyMap.get(normalized) ?? normalized
 }
 
-export const localizedIngredient = (value: string, language: Language) =>
-  ingredientLabel(normalizeIngredientKey(value), language)
+export const localizedIngredient = (value: string, language: Language) => {
+  const key = normalizeIngredientKey(value)
+  return ingredientCatalog.some((item) => item.key === key)
+    ? ingredientLabel(key, language)
+    : value
+}
 
 export const dietaryTagLabel = (
   tag: 'vegetarian' | 'vegan' | 'gluten-free',

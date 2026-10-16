@@ -1,16 +1,18 @@
 import type { Recipe, RecipeFilters, RecipeMatch } from '@/types/recipe'
-import { basicSeasoningIngredients } from '@/lib/i18n'
+import { basicSeasoningIngredients, normalizeIngredientKey } from '@/lib/i18n'
 
 export const normalizeIngredient = (ingredient: string) =>
-  ingredient
+  normalizeIngredientKey(ingredient)
     .toLowerCase()
     .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\p{M}/gu, '')
+    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
     .replace(/\s+/g, ' ')
     .trim()
 
-const basicSeasoningSet = new Set(basicSeasoningIngredients.map(normalizeIngredient))
+const basicSeasoningSet = new Set(
+  basicSeasoningIngredients.map(normalizeIngredient),
+)
 
 export const getIngredientOptions = (recipes: Recipe[]) => {
   const names = new Set<string>()
@@ -55,7 +57,8 @@ export const getRecipeMatches = (
   const matches = filteredRecipes
     .map((recipe) => {
       const scoredIngredients = recipe.ingredients.filter(
-        (ingredient) => !basicSeasoningSet.has(normalizeIngredient(ingredient.name)),
+        (ingredient) =>
+          !basicSeasoningSet.has(normalizeIngredient(ingredient.name)),
       )
       const availableIngredients = recipe.ingredients.filter((ingredient) =>
         selectedSet.has(normalizeIngredient(ingredient.name)),

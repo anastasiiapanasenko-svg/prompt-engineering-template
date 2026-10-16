@@ -23,8 +23,8 @@ Use the root [Agents.MD](../Agents.MD) as the rules orchestrator. Before changin
 
 ## Architecture boundaries
 
-- Frontend pages belong under the feature-specific structure in `frontend/src/features/`.
-- Recipe records and the selectable ingredient catalog live in `frontend/src/data/recipes.ts`; localization and ingredient category metadata live in `frontend/src/lib/i18n.ts`.
+- Frontend pages belong under the feature-specific structure in `recipe-app-frontend/src/features/`.
+- Recipe records and the selectable ingredient catalog live in `recipe-app-frontend/src/data/recipes.ts`; localization and ingredient category metadata live in `recipe-app-frontend/src/lib/i18n.ts`.
 - Ingredient panels are Meat, Grains, Vegetables, Dairy, Bakery, Spices, and Pantry. Every selectable ingredient must have EN/UA labels and exactly one category.
 - Data lives in the fixed local dataset, not in a backend database or external API.
 - Recipe matching logic must handle partial matches and highlight missing ingredients.
@@ -33,7 +33,7 @@ Use the root [Agents.MD](../Agents.MD) as the rules orchestrator. Before changin
 
 ## Toolchain
 
-From `frontend/`, use `npm run dev` to start Vite, `npm run typecheck` for TypeScript validation, `npm run lint` for ESLint, `npm run format` for Prettier formatting, and `npm run build` for the TypeScript/Vite production build.
+From `recipe-app-frontend/`, use `npm run dev` to start Vite, `npm run typecheck` for TypeScript validation, `npm run lint` for ESLint, `npm run format` for Prettier formatting, and `npm run build` for the TypeScript/Vite production build.
 
 ## Required workflow
 

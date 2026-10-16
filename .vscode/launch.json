@@ -2,15 +2,14 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Start backend",
-      "type": "debugpy",
+      "name": "Debug recipe API",
+      "type": "node",
       "request": "launch",
-      "module": "uvicorn",
-      "args": ["app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8001"],
-      "cwd": "${workspaceFolder}/backend",
-      "python": "${workspaceFolder}/backend/.venv/Scripts/python.exe",
-      "jinja": true,
-      "justMyCode": true
+      "program": "${workspaceFolder}/recipe-app-backend/src/index.ts",
+      "runtimeArgs": ["--import", "tsx", "--inspect"],
+      "cwd": "${workspaceFolder}/recipe-app-backend",
+      "envFile": "${workspaceFolder}/recipe-app-backend/.env",
+      "skipFiles": ["<node_internals>/**"]
     }
   ]
 }
