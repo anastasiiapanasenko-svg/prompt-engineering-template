@@ -6,7 +6,13 @@ Model Context Protocol (MCP) is a standard that lets AI clients discover and use
 
 ## Current status
 
-There is no project-configured MCP server in this repository. The recipe generator must continue to use its local recipe dataset and deterministic frontend matching logic. Its Express API is limited to account-related data; do not introduce an external recipe API or make the application depend on an MCP service.
+The workspace configures Atlassian's official remote MCP server for Jira and Confluence development workflows. The recipe generator must continue to use its local recipe dataset and deterministic frontend matching logic. Its Express API is limited to account-related data; do not introduce an external recipe API or make the application depend on an MCP service.
+
+## Atlassian Jira
+
+The workspace server entry in `.vscode/mcp.json` connects to Atlassian's remote MCP endpoint at `https://mcp.atlassian.com/v1/mcp`. It exposes Atlassian tools available to the authorizing account; use only the Jira capabilities needed for the requested project work. Authentication is completed interactively through Atlassian OAuth in VS Code. The account must have the necessary Jira project permissions. Do not place API tokens, passwords, or OAuth credentials in this repository.
+
+To connect, open the workspace in VS Code, start the `atlassian` MCP server from the MCP server controls, and complete the Atlassian authorization prompt. The email and API-token strings provided during the initial setup request were placeholders and were not saved. Confirm the selected Jira site and project permissions during authorization before creating or changing issues.
 
 ## Adding a development integration
 
