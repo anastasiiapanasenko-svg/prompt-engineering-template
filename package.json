@@ -27,11 +27,11 @@
     "lint-staged": "^17.6.2"
   },
   "lint-staged": {
-  "recipe-app-frontend/**/*.{ts,tsx,js,jsx,json,css}": [
-    "npm --prefix recipe-app-frontend exec prettier -- --write"
-  ],
-  "recipe-app-backend/**/*.{ts,js,json}": [
-    "npm --prefix recipe-app-backend exec prettier -- --write"
-  ]
-}
+    "recipe-app-frontend/**/*.{ts,tsx,js,jsx,json,css}": [
+      "npm --prefix recipe-app-frontend exec prettier -- --write"
+    ],
+    "recipe-app-backend/**/*.{ts,js,json}": [
+      "npm --prefix recipe-app-backend exec prettier -- --write"
+    ]
+  }
 }
