@@ -1,0 +1,5 @@
+npm --prefix recipe-app-frontend run typecheck
+npm --prefix recipe-app-frontend run lint
+npm --prefix recipe-app-backend run typecheck
+npm --prefix recipe-app-backend run lint
+npx lint-staged

@@ -1,0 +1,37 @@
+{
+  "name": "prompt-engineering-template",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anastasiiapanasenko-svg/prompt-engineering-template.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/anastasiiapanasenko-svg/prompt-engineering-template/issues"
+  },
+  "homepage": "https://github.com/anastasiiapanasenko-svg/prompt-engineering-template#readme",
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.2"
+  },
+  "lint-staged": {
+  "recipe-app-frontend/**/*.{ts,tsx,js,jsx,json,css}": [
+    "npm --prefix recipe-app-frontend exec prettier -- --write"
+  ],
+  "recipe-app-backend/**/*.{ts,js,json}": [
+    "npm --prefix recipe-app-backend exec prettier -- --write"
+  ]
+}
+}
